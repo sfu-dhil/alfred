@@ -1,4 +1,4 @@
-package ca.nines.alfred;
+package ca.nines.alfred.main;
 
 import ca.nines.alfred.main.Main;
 
