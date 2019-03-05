@@ -6,19 +6,14 @@
 package ca.nines.alfred.cmd;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -29,7 +24,6 @@ import org.atteo.classindex.ClassIndex;
 import org.atteo.classindex.IndexSubclasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 /**
  * This class contains methods that handle the terminal interface of the
@@ -42,19 +36,19 @@ abstract public class Command {
 
     protected final Logger logger;
 
-    private static final Map<String, Command> commandList = new TreeMap<>();
+    private static final Map<String, Class<? extends Command>> commandList = new TreeMap<>();
 
     private long count;
 
-    abstract public String getDescription();
+    protected PrintStream out;
+
+    protected PrintStream err;
 
     abstract public void execute(CommandLine cmd) throws Exception;
 
-    abstract public String getCommandName();
-
-    abstract public String getUsage();
-
     public Command() {
+        out = System.out;
+        err = System.err;
         logger = LoggerFactory.getLogger(this.getClass());
         count = 0;
     }
@@ -66,15 +60,15 @@ abstract public class Command {
     protected void tick() {
         count++;
         if (count % 1000 == 0) {
-            System.out.print("\r" + NumberFormat.getNumberInstance(Locale.US).format(count));
+            out.print("\r" + NumberFormat.getNumberInstance(Locale.US).format(count));
         }
     }
 
-    public static Map<String, Command> getCommandList() throws InstantiationException, IllegalAccessException {
+    public static final Map<String, Class<? extends Command>> getCommandList() {
         if (commandList.isEmpty()) {
-            for (Class<?> cls : ClassIndex.getSubclasses(Command.class)) {
-                Command cmd = (Command) cls.newInstance();
-                commandList.put(cmd.getCommandName(), cmd);
+            for (Class<? extends Command> cls : ClassIndex.getSubclasses(Command.class)) {
+                CommandInfo props = cls.getAnnotation(CommandInfo.class);
+                commandList.put(props.name(), cls);
             }
         }
         return commandList;
@@ -115,15 +109,37 @@ abstract public class Command {
         return args;
     }
 
+    public String usage() {
+        Class<? extends Command> cls = getClass();
+        CommandInfo props = cls.getAnnotation(CommandInfo.class);
+        return "java -jar alfred.jar " + props.name() + " [options]";
+    }
+
+    public String description() {
+        Class<? extends Command> cls = getClass();
+        CommandInfo props = cls.getAnnotation(CommandInfo.class);
+        return props.description();
+    }
+
     public void help() {
         HelpFormatter formatter = new HelpFormatter();
         Options opts = getOptions();
-        System.out.println(getDescription());
+        Class<? extends Command> cls = getClass();
+        CommandInfo props = cls.getAnnotation(CommandInfo.class);
+
+        out.println(props.description());
         if (opts.getOptions().size() > 0) {
-            formatter.printHelp(this.getClass().getSimpleName().toLowerCase() + " " + getUsage(), opts);
+            formatter.printHelp(usage(), opts);
         } else {
-            System.out.println(this.getClass().getSimpleName().toLowerCase() + " " + getUsage());
+            out.println(props.name() + " " + usage());
         }
     }
 
+    public void setOutput(PrintStream out) {
+        this.out = out;
+    }
+
+    public void setError(PrintStream err) {
+        this.err = err;
+    }
 }

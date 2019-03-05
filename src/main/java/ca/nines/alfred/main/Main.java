@@ -50,15 +50,9 @@ public class Main {
         this.err = err;
     }
 
-    public void run(String[] args) {
-        Map<String, Command> commandList;
-        try {
-            commandList = Command.getCommandList();
-        } catch (InstantiationException | IllegalAccessException ex) {
-            this.err.println("Internal error: " + ex.getMessage());
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            return;
-        }
+    public void run(String[] args) throws Exception {
+        Map<String, Class<? extends Command>> commandList;
+        commandList = Command.getCommandList();
 
         String commandName = "help";
         if (args.length > 0) {
@@ -67,37 +61,32 @@ public class Main {
 
         if (!commandList.containsKey(commandName)) {
             this.err.println("Unknown command: " + commandName);
-            return;
         }
 
-        Command cmd = commandList.get(commandName);
+        Command cmd = commandList.get(commandName).newInstance();
+        cmd.setOutput(this.out);
+        cmd.setError(this.err);
+
         Options opts = cmd.getOptions();
         CommandLine commandLine;
-
         commandLine = cmd.getCommandLine(opts, args);
-        if(commandLine == null) {
+        if(commandLine == null || commandLine.hasOption("help")) {
             cmd.help();
+            out.println(cmd.usage());
+            out.println(cmd.description());
             return;
         }
 
-        if (commandLine.hasOption("help")) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("java -jar oscar.jar " + cmd.getCommandName() + " [options]", opts);
-            System.out.println(cmd.getDescription());
-            return;
-        }
-
-        try {
-            cmd.execute(commandLine);
-        } catch (Exception ex) {
-            this.err.println("Internal error: " + ex.getMessage());
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        cmd.execute(commandLine);
     }
 
     public static void main(String[] args) {
         Main m = new Main();
-        m.run(args);
+        try {
+            m.run(args);
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        }
     }
 
 }
