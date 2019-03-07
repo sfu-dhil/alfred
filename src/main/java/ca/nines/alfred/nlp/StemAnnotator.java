@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ca.nines.alfred.annotator;
+package ca.nines.alfred.nlp;
 
 import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -11,12 +11,14 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.process.Stemmer;
+import edu.stanford.nlp.process.StemmerBuilder;
 import edu.stanford.nlp.util.ArraySet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -29,7 +31,7 @@ public class StemAnnotator implements Annotator, CoreAnnotation<String> {
     private final Logger logger;
 
     public StemAnnotator() {
-        stemmer = new Stemmer();
+        stemmer = StemmerBuilder.instance();
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -60,6 +62,4 @@ public class StemAnnotator implements Annotator, CoreAnnotation<String> {
     public Class<String> getType() {
         return String.class;
     }
-
-
 }

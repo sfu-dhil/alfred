@@ -5,6 +5,7 @@
  */
 package ca.nines.alfred.cmd;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -20,8 +21,12 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
 import org.atteo.classindex.ClassIndex;
 import org.atteo.classindex.IndexSubclasses;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +39,8 @@ import org.slf4j.LoggerFactory;
 @IndexSubclasses
 abstract public class Command {
 
+    public static final int TICK_SIZE = 100;
+
     protected final Logger logger;
 
     private static final Map<String, Class<? extends Command>> commandList = new TreeMap<>();
@@ -43,6 +50,8 @@ abstract public class Command {
     protected PrintStream out;
 
     protected PrintStream err;
+
+    protected NumberFormat formatter = NumberFormat.getNumberInstance(Locale.CANADA);
 
     abstract public void execute(CommandLine cmd) throws Exception;
 
@@ -54,13 +63,14 @@ abstract public class Command {
     }
 
     protected void reset() {
+        out.println("\r" + formatter.format(count));
         count = 0;
     }
 
     protected void tick() {
         count++;
-        if (count % 1000 == 0) {
-            out.print("\r" + NumberFormat.getNumberInstance(Locale.US).format(count));
+        if (count % TICK_SIZE == 0) {
+            out.print("\r" + formatter.format(count));
         }
     }
 
@@ -72,16 +82,6 @@ abstract public class Command {
             }
         }
         return commandList;
-    }
-
-    public List<Path> findFiles(String root) throws IOException {
-        return findFiles(Paths.get(root));
-    }
-
-    public List<Path> findFiles(Path root) throws IOException {
-        Stream<Path> filePathStream = Files.find(root, 4, (path, attr) -> String.valueOf(path).endsWith(".xml"));
-        ArrayList<Path> pathList = filePathStream.collect(Collectors.toCollection(ArrayList::new));
-        return pathList;
     }
 
     public Options getOptions() {
@@ -109,30 +109,17 @@ abstract public class Command {
         return args;
     }
 
-    public String usage() {
+    public void usage() {
         Class<? extends Command> cls = getClass();
         CommandInfo props = cls.getAnnotation(CommandInfo.class);
-        return "java -jar alfred.jar " + props.name() + " [options]";
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("java -jar alfred.jar " + props.name(), props.description(), getOptions(), "", true);
     }
 
     public String description() {
         Class<? extends Command> cls = getClass();
         CommandInfo props = cls.getAnnotation(CommandInfo.class);
         return props.description();
-    }
-
-    public void help() {
-        HelpFormatter formatter = new HelpFormatter();
-        Options opts = getOptions();
-        Class<? extends Command> cls = getClass();
-        CommandInfo props = cls.getAnnotation(CommandInfo.class);
-
-        out.println(props.description());
-        if (opts.getOptions().size() > 0) {
-            formatter.printHelp(usage(), opts);
-        } else {
-            out.println(props.name() + " " + usage());
-        }
     }
 
     public void setOutput(PrintStream out) {

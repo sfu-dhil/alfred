@@ -2,15 +2,14 @@ package edu.stanford.nlp.process;
 
 // https://stackoverflow.com/questions/33050169/stemming-option-in-stanfordcorenlp
 // https://raw.githubusercontent.com/stanfordnlp/CoreNLP/master/src/edu/stanford/nlp/process/Stemmer.java
+
+import edu.stanford.nlp.ling.Word;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
-
 import java.util.function.Function;
-
-
-import edu.stanford.nlp.ling.Word;
 
 /**
  * Stemmer, implementing the Porter Stemming Algorithm

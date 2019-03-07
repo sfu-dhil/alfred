@@ -55,12 +55,8 @@ public class Main {
         commandList = Command.getCommandList();
 
         String commandName = "help";
-        if (args.length > 0) {
+        if (args.length > 0 && commandList.containsKey(commandName)) {
             commandName = args[0];
-        }
-
-        if (!commandList.containsKey(commandName)) {
-            this.err.println("Unknown command: " + commandName);
         }
 
         Command cmd = commandList.get(commandName).newInstance();
@@ -71,9 +67,7 @@ public class Main {
         CommandLine commandLine;
         commandLine = cmd.getCommandLine(opts, args);
         if(commandLine == null || commandLine.hasOption("help")) {
-            cmd.help();
-            out.println(cmd.usage());
-            out.println(cmd.description());
+            cmd.usage();
             return;
         }
 
@@ -86,6 +80,7 @@ public class Main {
             m.run(args);
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
+            e.printStackTrace(System.err);
         }
     }
 

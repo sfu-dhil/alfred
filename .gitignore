@@ -3,3 +3,4 @@ alfred.iml
 target/
 alfred.jar
 reports/
+service-auth.json
