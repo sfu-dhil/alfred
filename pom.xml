@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ca.nines</groupId>
     <artifactId>alfred</artifactId>
@@ -16,7 +17,7 @@
         <finalName>${jar.finalName}</finalName>
         <defaultGoal>package</defaultGoal>
         <plugins>
-            
+
             <!-- copy the dependencies to the target/lib directory. -->
             <!-- see https://stackoverflow.com/a/4323501/9316 -->
             <plugin>
@@ -63,7 +64,7 @@
                     </archive>
                 </configuration>
             </plugin>
-            
+
             <!-- Copy the jar to the top level directory. -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -85,8 +86,8 @@
                     </arguments>
                 </configuration>
             </plugin>
-            
-            
+
+
             <!-- Clean the jar and result directory. -->
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -136,11 +137,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>1.6</version>
         </dependency>
@@ -150,11 +146,6 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.11.3</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.jtidy</groupId>
-            <artifactId>jtidy</artifactId>
-            <version>r938</version>
         </dependency>
 
         <!-- unit testing software -->
@@ -169,21 +160,7 @@
             <version>1.13.1</version>
         </dependency>
 
-        <!-- NLP software and data models. -->
-        <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp</artifactId>
-            <version>3.9.2</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.stanford.nlp</groupId>
-            <artifactId>stanford-corenlp</artifactId>
-            <version>3.9.2</version>
-            <classifier>models-english</classifier>
-        </dependency>
-
-        <!-- Required by stanford-corenlp, but not declared
-        as a dependency. odd that. -->
+        <!-- Simple logging. -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -194,5 +171,6 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
         </dependency>
+
     </dependencies>
 </project>
