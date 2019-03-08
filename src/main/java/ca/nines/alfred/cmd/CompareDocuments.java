@@ -3,6 +3,7 @@ package ca.nines.alfred.cmd;
 import ca.nines.alfred.comparator.Comparator;
 import ca.nines.alfred.comparator.CosineComparator;
 import ca.nines.alfred.comparator.LevenshteinComparator;
+import ca.nines.alfred.comparator.VSMComparator;
 import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.DocumentSimilarity;
 import ca.nines.alfred.entity.Report;
@@ -33,7 +34,8 @@ public class CompareDocuments extends Command {
                 comparator = new CosineComparator(corpus);
                 break;
             case "vsm":
-                throw new Exception("Vector space model not implemented yet.");
+                comparator = new VSMComparator(corpus);
+                break;
             default:
                 throw new Exception("Unknown comparison algorithm " + cmd.getOptionValue("algorithm") + ". Expected one of lev cos vsm.");
         }
