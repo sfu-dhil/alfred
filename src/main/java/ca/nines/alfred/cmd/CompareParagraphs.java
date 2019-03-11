@@ -6,11 +6,14 @@ import ca.nines.alfred.comparator.LevenshteinComparator;
 import ca.nines.alfred.comparator.VSMComparator;
 import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.DocumentSimilarity;
+import ca.nines.alfred.entity.ParagraphSimilarity;
 import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+
+import java.util.List;
 
 @CommandInfo(name = "pc", description = "Paragraph comparisons.")
 public class CompareParagraphs extends CompareCommand {
@@ -24,13 +27,24 @@ public class CompareParagraphs extends CompareCommand {
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
         for (int i = 0; i < corpus.size(); i++) {
             Report iReport = corpus.get(i);
+            String[] iIds = iReport.getParagraphIds();
             for (int j = 0; j < i; j++) {
                 Report jReport = corpus.get(j);
-                double similarity = comparator.compare(iReport, jReport);
-                if(similarity > 0) {
-                    iReport.addDocumentSimilarity(new DocumentSimilarity(jReport.getId(), similarity, comparator.getType()));
-                    jReport.addDocumentSimilarity(new DocumentSimilarity(iReport.getId(), similarity, comparator.getType()));
+                String[] jIds = jReport.getParagraphIds();
+
+                for(String iId : iIds) {
+                    for(String jId : jIds) {
+
+                        // FIX ME
+                        double similarity = comparator.compare(iReport.getParagraph(iId), jReport.getParagraph(jId));
+
+                        if(similarity > 0) {
+                            iReport.addParagraphSimilarity(iId, new ParagraphSimilarity(jReport.getId(), jId, similarity, comparator.getType()));
+                            jReport.addParagraphSimilarity(jId, new ParagraphSimilarity(iReport.getId(), iId, similarity, comparator.getType()));
+                        }
+                    }
                 }
+
                 tick();
             }
         }
