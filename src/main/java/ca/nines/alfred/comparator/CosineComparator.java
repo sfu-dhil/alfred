@@ -6,8 +6,8 @@ import ca.nines.alfred.util.Text;
 
 public class CosineComparator extends Comparator {
 
-    public CosineComparator(Corpus corpus) {
-        super(corpus);
+    public CosineComparator(Corpus corpus, String stopWordsFile) {
+        super(corpus, stopWordsFile);
     }
 
     @Override

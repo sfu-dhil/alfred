@@ -1,6 +1,8 @@
 package ca.nines.alfred.vsm;
 
+import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.util.Tokenizer;
+import org.apache.commons.collections4.SetUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,79 +11,70 @@ import java.util.Map;
 
 public class VectorSpaceModel {
 
-    private Map<String, Map<String, Integer>> vsm;
+    private final Tokenizer tokenizer;
 
-    private Map<String, Integer> termCount;
+    private final Map<String, Integer> docTermCounts;
 
-    private Tokenizer tokenizer;
+    private final Map<String, Map<String, Double>> model;
 
     public VectorSpaceModel(Tokenizer tokenizer) {
-        vsm = new HashMap<>();
-        termCount = new HashMap<>();
         this.tokenizer = tokenizer;
+        docTermCounts = new HashMap<>();
+        model = new HashMap<>();
     }
 
-    public void add(String id, String content) {
-        List<String> terms = tokenizer.words(content);
+    public void add(String id, String text) {
+        List<String> terms = tokenizer.tokenize(text);
+        Map<String, Double> w = new HashMap<>();
 
-        Map<String, Integer> d = new HashMap<>();
         for(String term : terms) {
-            if( ! d.containsKey(term)) {
-                d.put(term, 1);
+            if(w.containsKey(term)) {
+                w.put(term, w.get(term) + 1.0);
             } else {
-                d.put(term, d.get(term) + 1);
+                w.put(term, 1.0);
+                if(docTermCounts.containsKey(term)) {
+                    docTermCounts.put(term, docTermCounts.get(term) + 1);
+                } else {
+                    docTermCounts.put(term, 1);
+                }
             }
         }
-        vsm.put(id, d);
+        model.put(id, w);
+    }
 
-        for(String term : d.keySet()) {
-            int c = d.get(term);
-            if( ! termCount.containsKey(term)) {
-                termCount.put(term, d.get(term));
-            } else {
-                termCount.put(term, termCount.get(term) + d.get(term));
+    public void computeWeights() {
+        for(String id : model.keySet()) {
+            Map<String, Double> w = model.get(id);
+            double max = Collections.max(w.values());
+            for(String term : w.keySet()) {
+                double idf = Math.log10(model.size() / (double)docTermCounts.get(term));
+                double atf = 0.5 + 0.5 * w.get(term) / max;
+                double weight = atf * idf;
+                w.put(term, weight);
             }
         }
     }
 
-    protected double weight(String id, String term) {
-        return augmentedFrequency(id, term) * idf(term);
-    }
+    public double compare(String srcId, String dstId) {
+        Map<String, Double> srcWeights = model.get(srcId);
+        Map<String, Double> dstWeights = model.get(dstId);
 
-    protected int frequency(String id, String term) {
-        if( ! vsm.containsKey(id)) {
-            return 0;
-        }
-        Map<String, Integer> d = vsm.get(id);
-        if( ! d.containsKey(term)) {
-            return 0;
-        }
-        return d.get(term);
-    }
-
-    protected double augmentedFrequency(String id, String term) {
-        int f = frequency(id, term);
-
-        if(f == 0) {
-            return 0;
+        double value = 0.0;
+        for(String term : SetUtils.intersection(srcWeights.keySet(), dstWeights.keySet())) {
+            value += srcWeights.get(term) * dstWeights.get(term);
         }
 
-        int max = Collections.max(vsm.get(id).values());
-        return 0.5 + 0.5 * f / max;
-    }
-
-    // this should only be calculated once per term.
-    protected double idf(String term) {
-        int d = 0;
-        for(String id : vsm.keySet()) {
-            if(vsm.get(id).containsKey(term)) {
-                d++;
-            }
+        double srcNorm = 0;
+        for(double w : srcWeights.values()) {
+            srcNorm += w * w;
         }
-        return Math.log10(vsm.size() / (double)d);
+
+        double dstNorm = 0;
+        for(double w : dstWeights.values()) {
+            dstNorm += w * w;
+        }
+
+        return value / (Math.sqrt(srcNorm) * Math.sqrt(dstNorm));
     }
-
-
-
 
 }

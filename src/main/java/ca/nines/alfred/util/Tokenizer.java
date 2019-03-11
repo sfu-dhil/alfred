@@ -5,7 +5,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -21,35 +20,39 @@ public class Tokenizer {
 
     protected final Logger logger;
 
-    public Tokenizer() {
-        this(null);
+    private final int nGramSize;
+
+    public Tokenizer()  throws IOException{
+        this(null, 1);
     }
 
-    public Tokenizer(String stopWordFile) {
-        logger = LoggerFactory.getLogger(this.getClass());
+    public Tokenizer(String stopWordsFile)  throws IOException{
+        this(stopWordsFile, 1);
+    }
+
+    public Tokenizer(int nGramSize)  throws IOException{
+        this(null, nGramSize);
+    }
+
+    public Tokenizer(String stopWordsFile, int nGramSize) throws IOException {
+        this.nGramSize = nGramSize;
         stopWords = new HashSet<>();
-        if(stopWordFile == null  || stopWordFile.isEmpty()) {
+        logger = LoggerFactory.getLogger(this.getClass());
+        if(stopWordsFile == null) {
             return;
         }
-        InputStream in;
-        try {
-            in = this.getClass().getResourceAsStream("/" + StopWords.PATH + "/" + stopWordFile);
-            if(in == null) {
-                throw new FileNotFoundException("Stop word file " + stopWordFile + " was not found.");
+
+        InputStream in = getClass().getResourceAsStream("/" + StopWords.PATH + "/" + stopWordsFile);
+        for(String line : IOUtils.readLines(in, StandardCharsets.UTF_8)) {
+            if(line.length() == 0 || line.charAt(0) == '#') {
+                continue;
             }
-            for(String line : IOUtils.readLines(in, StandardCharsets.UTF_8)) {
-                if(line.length() == 0 || line.charAt(0) == '#') {
-                    continue;
-                }
-                stopWords.add(line.trim().toLowerCase());
-            }
-            logger.info("Added {} stopWords from {}.", stopWords.size(), stopWordFile);
-        } catch(IOException e) {
-            logger.warn("Cannot read stop word file {}. Stop words will not be filtered.", stopWordFile, e);
+            stopWords.add(line.trim().toLowerCase());
         }
+        logger.info("Added {} stopWords from {}.", stopWords.size(), stopWordsFile);
     }
 
-    public List<String> words(String text) {
+    public List<String> tokenize(String text) {
         StringTokenizer tokenizer = new StringTokenizer(text);
         List<String> words = new ArrayList<>();
         while(tokenizer.hasMoreTokens()) {
@@ -61,6 +64,5 @@ public class Tokenizer {
         }
         return words;
     }
-
 
 }

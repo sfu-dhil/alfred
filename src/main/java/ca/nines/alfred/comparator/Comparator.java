@@ -7,8 +7,11 @@ abstract public class Comparator {
 
     protected final Corpus corpus;
 
-    public Comparator(Corpus corpus) {
+    protected final String stopWordsFile;
+
+    public Comparator(Corpus corpus, String stopWordsFile) {
         this.corpus = corpus;
+        this.stopWordsFile = stopWordsFile;
     }
 
     abstract public String getType();

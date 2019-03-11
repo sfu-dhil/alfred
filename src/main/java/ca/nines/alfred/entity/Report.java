@@ -6,7 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities;
-import org.jsoup.nodes.XmlDeclaration;
 import org.jsoup.parser.Parser;
 
 import java.io.File;
@@ -183,6 +182,7 @@ public class Report {
             Element link = new Element("link");
             link.attr("href", s.getReportId());
             link.addClass("similarity").addClass(s.getType());
+            link.attr("rel", "similarity");
             link.attr("data-similarity", "" + s.getSimilarity());
             link.attr("data-type", s.getType());
             link.appendTo(document.head());

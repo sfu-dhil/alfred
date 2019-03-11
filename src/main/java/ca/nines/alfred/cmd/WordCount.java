@@ -8,7 +8,7 @@ import ca.nines.alfred.util.Tokenizer;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
-@CommandInfo(name="wc", description="Count the words in the reports.")
+@CommandInfo(name="wc", description="Count the tokenize in the reports.")
 public class WordCount extends Command {
 
     @Override
@@ -28,7 +28,7 @@ public class WordCount extends Command {
             tokenizer = new Tokenizer();
         }
         for(Report report : corpus) {
-            long count = tokenizer.words(report.getContent()).size();
+            long count = tokenizer.tokenize(report.getContent()).size();
             report.setMetadata("wr.word-count", "" + count);
             tick();
         }

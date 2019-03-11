@@ -6,8 +6,8 @@ import ca.nines.alfred.util.Text;
 
 public class LevenshteinComparator extends Comparator {
 
-    public LevenshteinComparator(Corpus corpus) {
-        super(corpus);
+    public LevenshteinComparator(Corpus corpus, String stopWordsFile) {
+        super(corpus, stopWordsFile);
     }
 
     @Override

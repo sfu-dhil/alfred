@@ -18,6 +18,7 @@ public class CompareDocuments extends Command {
     @Override
     public Options getOptions() {
         Options opts = super.getOptions();
+        opts.addOption(null, "stopwords", true, "Use stopword list.");
         opts.addRequiredOption(null, "algorithm", true, "Select algorithm to use. One of lev, cos, vsm.");
         return opts;
     }
@@ -26,15 +27,17 @@ public class CompareDocuments extends Command {
     public void execute(CommandLine cmd) throws Exception {
         Comparator comparator = null;
         Corpus corpus = CorpusReader.read(getArgList(cmd));
+        String stopWordsFile = cmd.getOptionValue("stopwords");
+
         switch (cmd.getOptionValue("algorithm")) {
             case "lev":
-                comparator = new LevenshteinComparator(corpus);
+                comparator = new LevenshteinComparator(corpus, stopWordsFile);
                 break;
             case "cos":
-                comparator = new CosineComparator(corpus);
+                comparator = new CosineComparator(corpus, stopWordsFile);
                 break;
             case "vsm":
-                comparator = new VSMComparator(corpus);
+                comparator = new VSMComparator(corpus, stopWordsFile);
                 break;
             default:
                 throw new Exception("Unknown comparison algorithm " + cmd.getOptionValue("algorithm") + ". Expected one of lev cos vsm.");
