@@ -7,12 +7,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities;
 import org.jsoup.parser.Parser;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -25,6 +27,8 @@ public class Report {
 
     private String id;
 
+    private String title;
+
     private String content;
 
     private String translatedContent;
@@ -33,9 +37,17 @@ public class Report {
 
     private List<DocumentSimilarity> documentSimilarities;
 
+    // id => content
+    private Map<String, String> paragraphs;
+
+    // paragraph id => list
+    private Map<String, List<ParagraphSimilarity>> paragraphSimilarities;
+
     public Report() {
         metadata = new TreeMap<>();
         documentSimilarities = new ArrayList<>();
+        paragraphs = new HashMap<>();
+        paragraphSimilarities = new HashMap<>();
     }
 
     public static Report read(File file) throws IOException {
@@ -48,6 +60,7 @@ public class Report {
         report.file = file;
         report.document = document;
         report.id = document.selectFirst("html").attr("id");
+        report.title = document.title();
 
         for(Element meta : document.select("meta")) {
             report.metadata.put(meta.attr("name"), meta.attr("content"));
@@ -61,10 +74,37 @@ public class Report {
             report.documentSimilarities.add(s);
         }
 
+        for(Element p : document.select("p")) {
+            if(p.select("a").isEmpty()) {
+                continue;
+            }
+            List<ParagraphSimilarity> similarities = new ArrayList<>();
+            for(Element a : p.select("a")) {
+                ParagraphSimilarity s = new ParagraphSimilarity(
+                        a.attr("href"),
+                        a.attr("data-paragraph"),
+                        Double.valueOf(a.attr("data-similarity")),
+                        a.attr("data-type")
+                );
+                similarities.add(s);
+            }
+           report.paragraphSimilarities.put(p.id(), similarities);
+        }
+
         report.content = Text.normalize(document.getElementById("original").text());
         Element div = document.selectFirst("#translation");
         if(div != null) {
             report.translatedContent = Text.normalize(div.text());
+        }
+
+        Elements paragraphs = null;
+        if(report.getMetadata("dc.language").equals("en")) {
+            paragraphs = document.select("#original p");
+        } else {
+            paragraphs = document.select("#translation p");
+        }
+        for(Element p : paragraphs) {
+            report.paragraphs.put(p.id(), Text.normalize(p.text()));
         }
 
         return report;
@@ -90,6 +130,14 @@ public class Report {
         }
     }
 
+    public String[] getParagraphIds() {
+        return paragraphs.keySet().toArray(new String[paragraphs.size()]);
+    }
+
+    public String getParagraph(String id) {
+        return paragraphs.get(id);
+    }
+
     public String getContent() {
         return content;
     }
@@ -108,6 +156,10 @@ public class Report {
 
     public String getTranslatedContent() {
         return translatedContent;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public void setTranslation(String translation) {
@@ -158,8 +210,19 @@ public class Report {
         documentSimilarities.add(s);
     }
 
-    public void removeSimilarities() {
+    public void removeDocumentSimilarities() {
         documentSimilarities.clear();
+    }
+
+    public void addParagraphSimilarity(String id, ParagraphSimilarity s) {
+        if( ! paragraphSimilarities.containsKey(id)) {
+            paragraphSimilarities.put(id, new ArrayList<>());
+        }
+        paragraphSimilarities.get(id).add(s);
+    }
+
+    public void removeParagraphSimilarities() {
+        paragraphSimilarities.clear();
     }
 
     public String serialize() {
@@ -186,6 +249,22 @@ public class Report {
             link.attr("data-similarity", "" + s.getSimilarity());
             link.attr("data-type", s.getType());
             link.appendTo(document.head());
+        }
+
+        for(Element p : document.select("p")) {
+            if( ! paragraphSimilarities.containsKey(p.id())) {
+                continue;
+            }
+            for(ParagraphSimilarity s : paragraphSimilarities.get(p.id())) {
+                Element a = new Element("a");
+                a.attr("href", s.getReportId());
+                a.addClass("similarity").addClass(s.getType());
+                a.attr("data-document", s.getReportId());
+                a.attr("data-paragraph", s.getParagraphId());
+                a.attr("data-similarity", "" + s.getSimilarity());
+                a.attr("data-type", s.getType());
+                a.appendTo(p);
+            }
         }
 
         document.outputSettings().escapeMode(Entities.EscapeMode.xhtml);

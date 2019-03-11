@@ -12,8 +12,8 @@ import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
-@CommandInfo(name = "dc", description = "Document comparisons.")
-public class CompareDocuments extends CompareCommand {
+@CommandInfo(name = "pc", description = "Paragraph comparisons.")
+public class CompareParagraphs extends CompareCommand {
 
     @Override
     public void execute(CommandLine cmd) throws Exception {

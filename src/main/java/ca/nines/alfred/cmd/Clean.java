@@ -33,7 +33,8 @@ public class Clean extends Command {
             if(cmd.hasOption("translations")) {
                 report.setTranslation(null);
             }
-            report.removeSimilarities();
+            report.removeDocumentSimilarities();
+            report.removeParagraphSimilarities();
             report.setMetadata("wr.path", null);
             report.setMetadata("wr.word-count", null);
             report.setMetadata("wr.wordcount", null);

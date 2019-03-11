@@ -8,6 +8,7 @@ package ca.nines.alfred.cmd;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,7 +78,13 @@ abstract public class Command {
     public static final Map<String, Class<? extends Command>> getCommandList() {
         if (commandList.isEmpty()) {
             for (Class<? extends Command> cls : ClassIndex.getSubclasses(Command.class)) {
+                if(Modifier.isAbstract(cls.getModifiers())) {
+                    continue;
+                }
                 CommandInfo props = cls.getAnnotation(CommandInfo.class);
+                if(props == null) {
+                    continue;
+                }
                 commandList.put(props.name(), cls);
             }
         }
