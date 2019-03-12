@@ -5,29 +5,19 @@
  */
 package ca.nines.alfred.cmd;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Modifier;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
 import org.atteo.classindex.ClassIndex;
 import org.atteo.classindex.IndexSubclasses;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +30,7 @@ import org.slf4j.LoggerFactory;
 @IndexSubclasses
 abstract public class Command {
 
-    public static final int TICK_SIZE = 100;
+    protected int tickSize = 100;
 
     protected final Logger logger;
 
@@ -70,7 +60,7 @@ abstract public class Command {
 
     protected void tick() {
         count++;
-        if (count % TICK_SIZE == 0) {
+        if (count % tickSize == 0) {
             out.print("\r" + formatter.format(count));
         }
     }

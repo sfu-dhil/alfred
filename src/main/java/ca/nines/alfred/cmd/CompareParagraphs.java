@@ -13,6 +13,11 @@ import org.apache.commons.cli.CommandLine;
 @CommandInfo(name = "pc", description = "Paragraph comparisons.")
 public class CompareParagraphs extends CompareCommand {
 
+    public CompareParagraphs() {
+        super();
+        tickSize = 10000;
+    }
+
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
