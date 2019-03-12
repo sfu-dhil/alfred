@@ -27,8 +27,8 @@ public class VSMComparator extends Comparator {
     }
 
     @Override
-    public double compare(Report a, Report b) {
-        double similarity = vsm.compare(a.getId(), b.getId());
+    public double compare(String aId, String bId) {
+        double similarity = vsm.compare(aId, bId);
         if(similarity > 0.6) {
             return Math.min(1.0, similarity);
         } else {

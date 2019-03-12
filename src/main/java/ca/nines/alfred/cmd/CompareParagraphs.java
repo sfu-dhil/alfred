@@ -24,20 +24,19 @@ public class CompareParagraphs extends CompareCommand {
         Comparator comparator = getComparator(corpus, cmd);
 
         int size = corpus.size();
+        String[] ids = corpus.getIds();
+
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
         for (int i = 0; i < corpus.size(); i++) {
-            Report iReport = corpus.get(i);
+            Report iReport = corpus.get(ids[i]);
             String[] iIds = iReport.getParagraphIds();
             for (int j = 0; j < i; j++) {
-                Report jReport = corpus.get(j);
+                Report jReport = corpus.get(ids[j]);
                 String[] jIds = jReport.getParagraphIds();
 
                 for(String iId : iIds) {
                     for(String jId : jIds) {
-
-                        // FIX ME
-                        double similarity = comparator.compare(iReport.getParagraph(iId), jReport.getParagraph(jId));
-
+                        double similarity = comparator.compare(iId, jId);
                         if(similarity > 0) {
                             iReport.addParagraphSimilarity(iId, new ParagraphSimilarity(jReport.getId(), jId, similarity, comparator.getType()));
                             jReport.addParagraphSimilarity(jId, new ParagraphSimilarity(iReport.getId(), iId, similarity, comparator.getType()));

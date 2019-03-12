@@ -1,7 +1,6 @@
 package ca.nines.alfred.comparator;
 
 import ca.nines.alfred.entity.Corpus;
-import ca.nines.alfred.entity.Report;
 
 abstract public class Comparator {
 
@@ -16,5 +15,5 @@ abstract public class Comparator {
 
     abstract public String getType();
 
-    abstract public double compare(Report a, Report b);
+    abstract public double compare(String aId, String bId);
 }

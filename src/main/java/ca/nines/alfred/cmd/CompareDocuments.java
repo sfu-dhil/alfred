@@ -21,12 +21,14 @@ public class CompareDocuments extends CompareCommand {
         Comparator comparator = getComparator(corpus, cmd);
 
         int size = corpus.size();
+        String[] ids = corpus.getIds();
+
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
-        for (int i = 0; i < corpus.size(); i++) {
-            Report iReport = corpus.get(i);
+        for (int i = 0; i < ids.length; i++) {
+            Report iReport = corpus.get(ids[i]);
             for (int j = 0; j < i; j++) {
-                Report jReport = corpus.get(j);
-                double similarity = comparator.compare(iReport, jReport);
+                Report jReport = corpus.get(ids[j]);
+                double similarity = comparator.compare(ids[i], ids[j]);
                 if(similarity > 0) {
                     iReport.addDocumentSimilarity(new DocumentSimilarity(jReport.getId(), similarity, comparator.getType()));
                     jReport.addDocumentSimilarity(new DocumentSimilarity(iReport.getId(), similarity, comparator.getType()));

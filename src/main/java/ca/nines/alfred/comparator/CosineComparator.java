@@ -1,10 +1,11 @@
 package ca.nines.alfred.comparator;
 
 import ca.nines.alfred.entity.Corpus;
-import ca.nines.alfred.entity.Report;
-import ca.nines.alfred.util.Text;
+import org.apache.commons.text.similarity.CosineDistance;
 
 public class CosineComparator extends Comparator {
+
+    public static final double THRESHOLD = 0.9;
 
     public CosineComparator(Corpus corpus, String stopWordsFile) {
         super(corpus, stopWordsFile);
@@ -16,9 +17,19 @@ public class CosineComparator extends Comparator {
     }
 
     @Override
-    public double compare(Report a, Report b) {
-        String aContent = a.getComparableContent();
-        String bContent = b.getComparableContent();
-        return Text.cosine(aContent, bContent);
+    public double compare(String aId, String bId) {
+        String aContent = corpus.get(aId).getComparableContent();
+        String bContent = corpus.get(bId).getComparableContent();
+        return cosine(aContent, bContent);
+    }
+
+    public static double cosine(String a, String b) {
+        CosineDistance cd = new CosineDistance();
+        double distance = cd.apply(a, b);
+        double similarity = 1.0 - distance;
+        if(similarity < THRESHOLD) {
+            return 0;
+        }
+        return similarity;
     }
 }
