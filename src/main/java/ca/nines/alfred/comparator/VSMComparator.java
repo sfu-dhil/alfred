@@ -2,6 +2,7 @@ package ca.nines.alfred.comparator;
 
 import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.Report;
+import ca.nines.alfred.entity.TextCollection;
 import ca.nines.alfred.util.Tokenizer;
 import ca.nines.alfred.vsm.VectorSpaceModel;
 
@@ -11,14 +12,13 @@ public class VSMComparator extends Comparator {
 
     private final VectorSpaceModel vsm;
 
-    public VSMComparator(Corpus corpus, String stopWordsFile) throws IOException {
-        super(corpus, stopWordsFile);
+    public VSMComparator(TextCollection collection, String stopWordsFile) throws IOException {
+        super(collection, stopWordsFile);
         Tokenizer tokenizer = new Tokenizer(stopWordsFile);
         vsm = new VectorSpaceModel(tokenizer);
-        for(Report report : corpus) {
-            vsm.add(report.getId(), report.getComparableContent());
+        for(String id : collection.keys()) {
+            vsm.add(id, collection.get(id));
         }
-        vsm.computeWeights();
     }
 
     @Override

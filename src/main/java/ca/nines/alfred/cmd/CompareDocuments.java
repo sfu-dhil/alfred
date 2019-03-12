@@ -7,6 +7,7 @@ import ca.nines.alfred.comparator.VSMComparator;
 import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.DocumentSimilarity;
 import ca.nines.alfred.entity.Report;
+import ca.nines.alfred.entity.TextCollection;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
@@ -18,20 +19,19 @@ public class CompareDocuments extends CompareCommand {
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
-        Comparator comparator = getComparator(corpus, cmd);
+        TextCollection collection = corpus.getCollection();
+        Comparator comparator = getComparator(collection, cmd);
 
-        int size = corpus.size();
-        String[] ids = corpus.getIds();
+        long size = collection.size();
+        String[] ids = collection.keys();
 
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
         for (int i = 0; i < ids.length; i++) {
-            Report iReport = corpus.get(ids[i]);
             for (int j = 0; j < i; j++) {
-                Report jReport = corpus.get(ids[j]);
                 double similarity = comparator.compare(ids[i], ids[j]);
                 if(similarity > 0) {
-                    iReport.addDocumentSimilarity(new DocumentSimilarity(jReport.getId(), similarity, comparator.getType()));
-                    jReport.addDocumentSimilarity(new DocumentSimilarity(iReport.getId(), similarity, comparator.getType()));
+                    corpus.get(ids[i]).addDocumentSimilarity(new DocumentSimilarity(ids[j], similarity, comparator.getType()));
+                    corpus.get(ids[j]).addDocumentSimilarity(new DocumentSimilarity(ids[i], similarity, comparator.getType()));
                 }
                 tick();
             }

@@ -1,15 +1,16 @@
 package ca.nines.alfred.comparator;
 
 import ca.nines.alfred.entity.Corpus;
+import ca.nines.alfred.entity.TextCollection;
 
 abstract public class Comparator {
 
-    protected final Corpus corpus;
+    protected final TextCollection collection;
 
     protected final String stopWordsFile;
 
-    public Comparator(Corpus corpus, String stopWordsFile) {
-        this.corpus = corpus;
+    public Comparator(TextCollection collection, String stopWordsFile) {
+        this.collection = collection;
         this.stopWordsFile = stopWordsFile;
     }
 

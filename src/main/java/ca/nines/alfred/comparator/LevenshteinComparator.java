@@ -1,14 +1,15 @@
 package ca.nines.alfred.comparator;
 
 import ca.nines.alfred.entity.Corpus;
+import ca.nines.alfred.entity.TextCollection;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 public class LevenshteinComparator extends Comparator {
 
     public static final double THRESHOLD = 0.6;
 
-    public LevenshteinComparator(Corpus corpus, String stopWordsFile) {
-        super(corpus, stopWordsFile);
+    public LevenshteinComparator(TextCollection collection, String stopWordsFile) {
+        super(collection, stopWordsFile);
     }
 
     @Override
@@ -18,8 +19,8 @@ public class LevenshteinComparator extends Comparator {
 
     @Override
     public double compare(String aId, String bId) {
-        String aContent = corpus.get(aId).getComparableContent();
-        String bContent = corpus.get(bId).getComparableContent();
+        String aContent = collection.get(aId);
+        String bContent = collection.get(bId);
         return levenshtein(aContent, bContent);
     }
 
