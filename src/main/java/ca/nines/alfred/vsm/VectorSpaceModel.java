@@ -3,13 +3,18 @@ package ca.nines.alfred.vsm;
 import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.util.Tokenizer;
 import org.apache.commons.collections4.SetUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class VectorSpaceModel {
+
+    protected final Logger logger;
 
     private final Tokenizer tokenizer;
 
@@ -18,6 +23,7 @@ public class VectorSpaceModel {
     private final Map<String, Map<String, Double>> model;
 
     public VectorSpaceModel(Tokenizer tokenizer) {
+        logger = LoggerFactory.getLogger(this.getClass());
         this.tokenizer = tokenizer;
         docTermCounts = new HashMap<>();
         model = new HashMap<>();
@@ -45,6 +51,9 @@ public class VectorSpaceModel {
     public void computeWeights() {
         for(String id : model.keySet()) {
             Map<String, Double> w = model.get(id);
+            if(w.size() == 0) {
+                continue;
+            }
             double max = Collections.max(w.values());
             for(String term : w.keySet()) {
                 double idf = Math.log10(model.size() / (double)docTermCounts.get(term));

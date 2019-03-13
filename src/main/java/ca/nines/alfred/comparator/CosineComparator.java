@@ -8,8 +8,6 @@ public class CosineComparator extends Comparator {
 
     public static final double THRESHOLD = 0.9;
 
-    public static final int MIN_LENGTH = 64;
-
     public CosineComparator(TextCollection collection, String stopWordsFile) {
         super(collection, stopWordsFile);
     }
@@ -27,9 +25,6 @@ public class CosineComparator extends Comparator {
     }
 
     public static double cosine(String a, String b) {
-        if(a.length() < MIN_LENGTH || b.length() < MIN_LENGTH) {
-            return 0;
-        }
         CosineDistance cd = new CosineDistance();
         double distance = cd.apply(a, b);
         double similarity = 1.0 - distance;

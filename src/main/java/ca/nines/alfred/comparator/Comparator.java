@@ -5,6 +5,8 @@ import ca.nines.alfred.entity.TextCollection;
 
 abstract public class Comparator {
 
+    public static final int MIN_LENGTH = 64;
+
     protected final TextCollection collection;
 
     protected final String stopWordsFile;

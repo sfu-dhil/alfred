@@ -7,8 +7,11 @@ import ca.nines.alfred.util.Tokenizer;
 import ca.nines.alfred.vsm.VectorSpaceModel;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 public class VSMComparator extends Comparator {
+
+    public static final double THRESHOLD = 0.9;
 
     private final VectorSpaceModel vsm;
 
@@ -19,6 +22,7 @@ public class VSMComparator extends Comparator {
         for(String id : collection.keys()) {
             vsm.add(id, collection.get(id));
         }
+        vsm.computeWeights();
     }
 
     @Override
@@ -29,7 +33,7 @@ public class VSMComparator extends Comparator {
     @Override
     public double compare(String aId, String bId) {
         double similarity = vsm.compare(aId, bId);
-        if(similarity > 0.6) {
+        if(similarity > THRESHOLD) {
             return Math.min(1.0, similarity);
         } else {
             return 0.0;

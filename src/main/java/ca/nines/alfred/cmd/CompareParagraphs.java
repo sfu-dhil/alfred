@@ -38,13 +38,17 @@ public class CompareParagraphs extends CompareCommand {
 
                 for (String iId : srcIds) {
                     for (String jId : dstIds) {
+                        tick();
+                        if(src.getParagraph(iId).length() < Comparator.MIN_LENGTH ||
+                            dst.getParagraph(jId).length() < Comparator.MIN_LENGTH) {
+                            continue;
+                        }
                         double similarity = 0;
                         try {
                             similarity = comparator.compare(iId, jId);
                         } catch (IllegalArgumentException e) {
                             logger.error("Cannot compare {} to {}: {}", iId, jId, e.getMessage());
                         }
-                        tick();
                         if (similarity <= 0) {
                             continue;
                         }
