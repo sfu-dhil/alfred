@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" id="lga_590">
+    <head>
+        <title>Title</title>
+        <meta content="1895-04-10" name="dc.date"/>
+        <meta content="fr" name="dc.language"/>
+        <meta content="France" name="dc.region"/>
+        <meta content="yes" name="wr.translated"/>
+        <meta content="1184" name="wr.word-count"/>
+        <link href="gmm_23" class="similarity cos" rel="similarity" data-similarity="0.9139787191473906" data-type="cos"/>
+    </head>
+    <body>
+        <div id="original" lang="fr">
+            <p id="lga_590_2">Mais, je l'avais presque prévue cette fin de M. Oscar Wilde, nous dit M. Max Nordau, en
+                nous accueillant avec sa bonne grâce accoutumée. Et vous me voyez même fort embarrassé pour vous parler
+                de lui, car l'ayant attaqué comme je l'ai fait quand il était triomphant, j'ai des scrupules, à revenir
+                sur les doctrines détestables d'un homme qui a fini par en être la propre victime.
+            </p>
+            <p class="signature" id="lga_590_13">PAUL ROCHE</p>
+        </div>
+        <div id="translation" lang="en">
+            <p id="lga_590_2_tr">But I had almost anticipated the end of Mr. Oscar Wilde, said Mr. Max Nordau, welcoming
+                us with his usual good grace. And you see me very much embarrassed to talk about him, because having
+                attacked him as I did when he was triumphant, I have scruples, to return to the detestable doctrines of
+                a man who ended up in to be the own victim.
+                <a href="abc_412" class="similarity vsm" data-document="abc_412" data-paragraph="abc_412_4" data-similarity="0.995" data-type="vsm"></a>
+            </p>
+            <p class="signature" id="lga_590_13_tr">PAUL ROCHE</p>
+        </div>
+    </body>
+</html>

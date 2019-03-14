@@ -21,27 +21,27 @@ import java.util.TreeMap;
 
 public class Report {
 
-    private File file;
+    File file;
 
-    private Document document;
+    Document document;
 
-    private String id;
+    String id;
 
-    private String title;
+    String title;
 
-    private String content;
+    String content;
 
-    private String translatedContent;
+    String translatedContent;
 
-    private Map<String,String> metadata;
+    Map<String,String> metadata;
 
-    private List<DocumentSimilarity> documentSimilarities;
+    List<DocumentSimilarity> documentSimilarities;
 
     // id => content
-    private Map<String, String> paragraphs;
+    Map<String, String> paragraphs;
 
     // paragraph id => list
-    private Map<String, List<ParagraphSimilarity>> paragraphSimilarities;
+    Map<String, List<ParagraphSimilarity>> paragraphSimilarities;
 
     public Report() {
         metadata = new TreeMap<>();
@@ -51,13 +51,16 @@ public class Report {
     }
 
     public static Report read(File file) throws IOException {
+        String html = FileUtils.readFileToString(file, "UTF-8");
+        Report report = read(html);
+        report.file = file;
+        return read(html);
+    }
 
-        InputStream inputStream = FileUtils.openInputStream(file);
-        Document document = Jsoup.parse(inputStream, "UTF-8", "", Parser.xmlParser());
-        inputStream.close();
+    public static Report read(String html) throws IOException {
+        Document document = Jsoup.parse(html, "", Parser.xmlParser());
 
         Report report = new Report();
-        report.file = file;
         report.document = document;
         report.id = document.selectFirst("html").attr("id");
         report.title = document.title();
