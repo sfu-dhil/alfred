@@ -1,6 +1,5 @@
 package ca.nines.alfred.comparator;
 
-import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.TextCollection;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 

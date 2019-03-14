@@ -16,11 +16,11 @@ public class VectorSpaceModel {
 
     protected final Logger logger;
 
-    private final Tokenizer tokenizer;
+    final Tokenizer tokenizer;
 
-    private final Map<String, Integer> docTermCounts;
+    final Map<String, Integer> docTermCounts;
 
-    private final Map<String, Map<String, Double>> model;
+    final Map<String, Map<String, Double>> model;
 
     public VectorSpaceModel(Tokenizer tokenizer) {
         logger = LoggerFactory.getLogger(this.getClass());
@@ -57,8 +57,8 @@ public class VectorSpaceModel {
             double max = Collections.max(w.values());
             for(String term : w.keySet()) {
                 double idf = Math.log10(model.size() / (double)docTermCounts.get(term));
-                double atf = 0.5 + 0.5 * w.get(term) / max;
-                double weight = atf * idf;
+                double tf = w.get(term); // should this be augmented term frequencies? dunno.
+                double weight = tf * idf;
                 w.put(term, weight);
             }
         }

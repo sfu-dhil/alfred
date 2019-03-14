@@ -1,13 +1,10 @@
 package ca.nines.alfred.comparator;
 
-import ca.nines.alfred.entity.Corpus;
-import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.entity.TextCollection;
 import ca.nines.alfred.util.Tokenizer;
 import ca.nines.alfred.vsm.VectorSpaceModel;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 
 public class VSMComparator extends Comparator {
 
@@ -25,6 +22,11 @@ public class VSMComparator extends Comparator {
         vsm.computeWeights();
     }
 
+    public VSMComparator(VectorSpaceModel vsm) {
+        super(null, null);
+        this.vsm = vsm;
+    }
+
     @Override
     public String getType() {
         return "vsm";
@@ -33,7 +35,7 @@ public class VSMComparator extends Comparator {
     @Override
     public double compare(String aId, String bId) {
         double similarity = vsm.compare(aId, bId);
-        if(similarity > THRESHOLD) {
+        if(similarity >= THRESHOLD) {
             return Math.min(1.0, similarity);
         } else {
             return 0.0;
