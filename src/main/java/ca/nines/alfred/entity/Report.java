@@ -11,7 +11,6 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +56,7 @@ public class Report {
         return read(html);
     }
 
-    public static Report read(String html) throws IOException {
+    public static Report read(String html) {
         Document document = Jsoup.parse(html, "", Parser.xmlParser());
 
         Report report = new Report();

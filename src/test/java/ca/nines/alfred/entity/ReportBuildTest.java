@@ -51,16 +51,6 @@ public class ReportBuildTest {
     }
 
     @Test
-    public void buildContent() {
-        assertThat(report.content, startsWith("mais je lavais presque"));
-    }
-
-    @Test
-    public void buildTranslatedContent() {
-        assertThat(report.translatedContent, startsWith("but i had almost anticipated"));
-    }
-
-    @Test
     @UseDataProvider("buildMetadataData")
     public void buildMetadata(String expected, String key) {
         assertEquals(expected, report.metadata.get(key));
@@ -98,5 +88,21 @@ public class ReportBuildTest {
         assertEquals(0.995, s.getSimilarity(), 0.001);
     }
 
+    @Test
+    public void buildContent() {
+        assertThat(report.content, startsWith("mais je lavais presque"));
+    }
+
+    @Test
+    public void buildTranslatedContent() {
+        assertThat(report.translatedContent, startsWith("but i had almost anticipated"));
+    }
+
+    @Test
+    public void buildParagraphs() {
+        assertEquals(2, report.paragraphs.size());
+        assertThat(report.paragraphs.get("lga_590_2_tr"), startsWith("but i had almost anticipated"));
+        assertEquals("paul roche", report.paragraphs.get("lga_590_13_tr"));
+    }
 
 }
