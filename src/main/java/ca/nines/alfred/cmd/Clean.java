@@ -7,9 +7,20 @@ import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
+/**
+ * Clean removes added metadata from the reports XML.
+ */
 @CommandInfo(name="clean", description="Clean the files in a directory.")
 public class Clean extends Command {
 
+    /**
+     * Add options to the command line parser.
+     *
+     *  -t | --translations will remove the translations from the reports.
+     *       --ids will remove IDs and generate them fresh.
+     *
+     * @return configured options.
+     */
     @Override
     public Options getOptions() {
         Options opts = super.getOptions();
@@ -18,6 +29,13 @@ public class Clean extends Command {
         return opts;
     }
 
+    /**
+     * Read all the XML documents in one or more directories and clean them. Writes the cleaned XML back to the
+     * file.
+     *
+     * @param cmd Parsed command line.
+     * @throws Exception for IO errors.
+     */
     @Override
     public void execute(CommandLine cmd) throws Exception {
         int n = 0;

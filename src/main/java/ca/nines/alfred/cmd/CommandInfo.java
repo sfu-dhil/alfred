@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 michael.
+ * Copyright 2019 Michael Joyce
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
+ * Annotation for commands. Required for them to be recognized.
  *
  * @author michael
  */
@@ -38,7 +39,17 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandInfo {
 
+    /**
+     * Get a description of the command from the annotation
+     *
+     * @return short description
+     */
     String description();
 
+    /**
+     * Short name of the command, used on the command line to call the command.
+     *
+     * @return short name
+     */
     String name();
 }

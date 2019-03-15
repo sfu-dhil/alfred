@@ -1,17 +1,12 @@
 package ca.nines.alfred.cmd;
 
 import ca.nines.alfred.comparator.Comparator;
-import ca.nines.alfred.comparator.CosineComparator;
-import ca.nines.alfred.comparator.LevenshteinComparator;
-import ca.nines.alfred.comparator.VSMComparator;
 import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.DocumentSimilarity;
-import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.entity.TextCollection;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
 
 @CommandInfo(name = "dc", description = "Document comparisons.")
 public class CompareDocuments extends CompareCommand {
