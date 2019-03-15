@@ -16,6 +16,18 @@
     <build>
         <finalName>${jar.finalName}</finalName>
         <defaultGoal>package</defaultGoal>
+
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
         <plugins>
 
             <!-- copy the dependencies to the target/lib directory. -->
@@ -62,6 +74,15 @@
                             <mainClass>ca.nines.alfred.main.Main</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <detectLinks/>
                 </configuration>
             </plugin>
 
