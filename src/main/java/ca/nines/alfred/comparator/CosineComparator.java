@@ -1,16 +1,42 @@
+/*
+ * Copyright (C) 2019 Michael Joyce
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 package ca.nines.alfred.comparator;
 
-import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.TextCollection;
 import org.apache.commons.text.similarity.CosineDistance;
-import org.slf4j.Logger;
 
 import java.util.regex.Pattern;
 
+/**
+ * Uses a cosine distance algorithm to estimate the similarity between two documents.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Cosine_similarity">Cosine Similarity on Wikipedia</a>
+ */
 public class CosineComparator extends Comparator {
 
+    /**
+     * Minimum similarity. Documents which are less similar are not reported.
+     */
     public static final double THRESHOLD = 0.9;
 
+    /**
+     * The cosine algorithm requires words with letters to operate or it will throw an exception.
+     */
     private static final Pattern CHARS = Pattern.compile("[a-zA-Z]");
 
     public CosineComparator(TextCollection collection, String stopWordsFile) {
@@ -29,7 +55,14 @@ public class CosineComparator extends Comparator {
         return cosine(aContent, bContent);
     }
 
-    public double cosine(String a, String b) {
+    /**
+     * Calculate the cosine distance and estimate the similarity from it.
+     *
+     * @param a first text to compare
+     * @param b second text to compare
+     * @return a percentage match of the two documents
+     */
+    double cosine(String a, String b) {
         if(a.length() == 0 || b.length() == 0) {
             return 0;
         }

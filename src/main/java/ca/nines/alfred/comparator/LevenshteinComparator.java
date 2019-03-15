@@ -1,10 +1,36 @@
+/*
+ * Copyright (C) 2019 Michael Joyce
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 package ca.nines.alfred.comparator;
 
 import ca.nines.alfred.entity.TextCollection;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
+/**
+ * Uses Levenshtein distance to estimate the similarity between two documents. This method is very slow,
+ * but also precise and sensitive to word order.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein Distance</a>
+ */
 public class LevenshteinComparator extends Comparator {
 
+    /**
+     * Report matches above this threshold. All others are reported as 0.
+     */
     public static final double THRESHOLD = 0.6;
 
     public LevenshteinComparator(TextCollection collection, String stopWordsFile) {
@@ -23,7 +49,14 @@ public class LevenshteinComparator extends Comparator {
         return levenshtein(aContent, bContent);
     }
 
-    public double levenshtein(String a, String b) {
+    /**
+     * Do the Levenshtein calculation.
+     *
+     * @param a first text to compare
+     * @param b second text to compare
+     * @return a percentage match between the two documents.
+     */
+    double levenshtein(String a, String b) {
         if (a.equals(b)) {
             return 1.0;
         }

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2019 Michael Joyce
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ */
+
 package ca.nines.alfred.entity;
 
 import ca.nines.alfred.util.Text;
@@ -18,30 +35,64 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * A report object is the metadata and content of one report file stored on disk.
+ */
 public class Report {
 
+    /**
+     * The source file for this report.
+     */
     File file;
 
+    /**
+     * A JSoup document with the reports content.
+     */
     Document document;
 
+    /**
+     * Report ID from the html root element.
+     */
     String id;
 
+    /**
+     * Title from the report title element
+     */
     String title;
 
+    /**
+     * Normalized text content. The text is converted to lower case and stripped of punctuation suitable for matching.
+     */
     String content;
 
+    /**
+     * Normalized translated text content. The text is converted to lower case and stripped of punctuation suitable for matching.
+     */
     String translatedContent;
 
+    /**
+     * Metadata elements parsed from the HTML document.
+     */
     Map<String,String> metadata;
 
+    /**
+     * Document-level similarities either found in the corpus or in the document itself.
+     */
     List<DocumentSimilarity> documentSimilarities;
 
-    // id => content
+    /**
+     * List of IDs to normalized paragraph content.
+     */
     Map<String, String> paragraphs;
 
-    // paragraph id => list
+    /**
+     * List of IDs mapped to paragraph similarities
+     */
     Map<String, List<ParagraphSimilarity>> paragraphSimilarities;
 
+    /**
+     * Create a new empty report.
+     */
     public Report() {
         metadata = new TreeMap<>();
         documentSimilarities = new ArrayList<>();
@@ -49,6 +100,13 @@ public class Report {
         paragraphSimilarities = new HashMap<>();
     }
 
+    /**
+     * Read a report from a file on disk.
+     *
+     * @param file the file to read
+     * @return the parsed report
+     * @throws IOException if the report cannot be read
+     */
     public static Report read(File file) throws IOException {
         String html = FileUtils.readFileToString(file, "UTF-8");
         Report report = read(html);
@@ -56,6 +114,12 @@ public class Report {
         return read(html);
     }
 
+    /**
+     * Read a report from a string.
+     *
+     * @param html the string to be parsed
+     * @return the parsed report
+     */
     public static Report read(String html) {
         Document document = Jsoup.parse(html, "", Parser.xmlParser());
 
@@ -112,14 +176,29 @@ public class Report {
         return report;
     }
 
+    /**
+     * Get report ID parsed from the HTML element.
+     *
+     * @return the ID or null
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Set the report ID
+     *
+     * @param id the ID to set
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Check if the report has an ID
+     *
+     * @return true if the report has an ID.
+     */
     public boolean hasId() {
         return this.id != null;
     }
