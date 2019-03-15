@@ -28,11 +28,17 @@ import org.apache.commons.cli.CommandLine;
 import java.util.Formatter;
 import java.util.Map;
 
+/**
+ * Show some useful info to help a user out.
+ */
 @CommandInfo(name="help", description="Describe the application and its usage.")
 public class Help extends Command {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void execute(CommandLine cmd) throws Exception {
+    public void execute(CommandLine cmd) {
         out.println("General usage: java -jar oscar.jar [command] [options]");
         out.println("Specific command: java -jar oscar.jar [command] -h");
         out.println();
@@ -40,7 +46,10 @@ public class Help extends Command {
         listCommands();
     }
 
-    public void listCommands() throws InstantiationException, IllegalAccessException {
+    /**
+     * Print out a list of commands and descriptions.
+     */
+    public void listCommands() {
         Formatter formatter = new Formatter(out);
         formatter.format("%n%16s   %s%n", "Command", "Description");
 

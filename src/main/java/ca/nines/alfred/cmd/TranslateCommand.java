@@ -35,9 +35,19 @@ import com.google.cloud.translate.Translate.TranslateOption;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 
+/**
+ * Translate all the reports using the Google Translate API.
+ *
+ * Requires the GOOGLE_APPLICATION_CREDENTIALS environment variable to be set. It should be the path to the
+ * credentials file downloaded from the Google API Console.
+ */
 @CommandInfo(name = "translate", description = "TranslateCommand documents into English.")
 public class TranslateCommand extends Command {
 
+    /**
+     * Adds a -f | --force option, which will retranslate all the translated files.
+     * @return configured command line options
+     */
     @Override
     public Options getOptions() {
         Options opts = super.getOptions();
@@ -45,6 +55,9 @@ public class TranslateCommand extends Command {
         return opts;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(CommandLine cmd) throws Exception {
         if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS") == null) {

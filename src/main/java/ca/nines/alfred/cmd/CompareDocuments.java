@@ -8,9 +8,15 @@ import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 
+/**
+ * Compare all the documents in the collection of reports.
+ */
 @CommandInfo(name = "dc", description = "Document comparisons.")
 public class CompareDocuments extends CompareCommand {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));

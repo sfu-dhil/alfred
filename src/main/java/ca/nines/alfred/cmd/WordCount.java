@@ -31,9 +31,17 @@ import ca.nines.alfred.util.Tokenizer;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
+/**
+ * Count the words in each document and set the relevant metadata for each file.
+ */
 @CommandInfo(name="wc", description="Count the tokenize in the reports.")
 public class WordCount extends Command {
 
+    /**
+     * Adds a --stopwords option to use one of the stop words files to file out common words.
+     *
+     * @return options for the command line
+     */
     @Override
     public Options getOptions() {
         Options opts = super.getOptions();
@@ -41,6 +49,9 @@ public class WordCount extends Command {
         return opts;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));

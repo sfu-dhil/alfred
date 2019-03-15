@@ -32,14 +32,24 @@ import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 
+/**
+ * Compare all the paragraphs in the collection of reports.
+ */
 @CommandInfo(name = "pc", description = "Paragraph comparisons.")
 public class CompareParagraphs extends CompareCommand {
 
+    /**
+     * {@inheritDoc}
+     * Sets the tick size to 10,000 because the ticks are fast and furious.
+     */
     public CompareParagraphs() {
         super();
         tickSize = 10000;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
