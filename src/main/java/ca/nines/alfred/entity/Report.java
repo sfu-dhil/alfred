@@ -203,6 +203,9 @@ public class Report {
         return this.id != null;
     }
 
+    /**
+     * Set or reset the paragraph IDs for the paragraphs in the original content of the documentation.
+     */
     public void setParagraphIds() {
         int m = 0;
         for(Element p : document.select("#original p")) {
@@ -211,22 +214,48 @@ public class Report {
         }
     }
 
+    /**
+     * Return the paragraph IDs. The order is not based on document structure.
+     *
+     * @return an array of paragraph IDs.
+     */
     public String[] getParagraphIds() {
         return paragraphs.keySet().toArray(new String[paragraphs.size()]);
     }
 
+    /**
+     * Get the normalized content of one paragraph.
+     *
+     * @param id of the paragraph to fetch
+     * @return normalized content from the paragraph
+     */
     public String getParagraph(String id) {
         return paragraphs.get(id);
     }
 
+    /**
+     * Get the normalized original content of the report.
+     *
+     * @return normalized original content
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     * Get the original HTML content, unnormalized. As it appears in the XML file on disk.
+     *
+     * @return HTML-containing string
+     */
     public String getContentHtml() {
         return document.select("div#original").outerHtml();
     }
 
+    /**
+     * Returns the English-language normalized content from the report.
+     *
+     * @return a comparable string
+     */
     public String getComparableContent() {
         if(metadata.get("dc.language").equals("en")) {
             return content;
@@ -235,14 +264,20 @@ public class Report {
         }
     }
 
-    public String getTranslatedContent() {
-        return translatedContent;
-    }
-
+    /**
+     * Get the title of the report
+     *
+     * @return the title string
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Set or replace the translated content.
+     *
+     * @param translation html string with the translated content.
+     */
     public void setTranslation(String translation) {
         document.select("#translation").remove();
         document.select(".translated").remove();
@@ -267,6 +302,13 @@ public class Report {
         setMetadata("wr.translated", "yes");
     }
 
+    /**
+     * Set a metadata item for the report. If content is null or the empty string the
+     * metadata key will be removed.
+     *
+     * @param name the name attribute of the metadata item
+     * @param content the content of the metadata item
+     */
     public void setMetadata(String name, String content) {
         if(content == null) {
             metadata.remove(name);
@@ -275,26 +317,57 @@ public class Report {
         }
     }
 
+    /**
+     * Get a metadata item.
+     *
+     * @param name the metadata key
+     * @return the value of the metadata key or null if the key doesn't exit.
+     */
     public String getMetadata(String name) {
         return metadata.get(name);
     }
 
+    /**
+     * Check if a metadata key exists.
+     *
+     * @param name name of the key
+     * @return true if the key exists
+     */
     public boolean hasMetadata(String name) {
         return metadata.containsKey(name);
     }
 
+    /**
+     * Get the source file for the report
+     *
+     * @return the file or null if the report was built from a string
+     */
     public File getFile() {
         return file;
     }
 
+    /**
+     * Add a document-level similarity.
+     *
+     * @param s the similarity to add
+     */
     public void addDocumentSimilarity(DocumentSimilarity s) {
         documentSimilarities.add(s);
     }
 
+    /**
+     * Remove all document level similarities.
+     */
     public void removeDocumentSimilarities() {
         documentSimilarities.clear();
     }
 
+    /**
+     * Add a paragraph similarity to the report.
+     *
+     * @param id the id of the paragraph that is similar to one in another document
+     * @param s the paragraph similarity
+     */
     public void addParagraphSimilarity(String id, ParagraphSimilarity s) {
         if( ! paragraphSimilarities.containsKey(id)) {
             paragraphSimilarities.put(id, new ArrayList<>());
@@ -302,10 +375,19 @@ public class Report {
         paragraphSimilarities.get(id).add(s);
     }
 
+    /**
+     * Remove all paragraph level similarities from the report.
+     */
     public void removeParagraphSimilarities() {
         paragraphSimilarities.clear();
     }
 
+    /**
+     * Serialize the report into html, after incorporating any changes to the metadata or similarity
+     * data.
+     *
+     * @return HTML string
+     */
     public String serialize() {
         document.selectFirst("html").attr("id", id);
 
