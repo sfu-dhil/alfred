@@ -22,6 +22,7 @@ import ca.nines.alfred.cmd.Command;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
@@ -81,6 +82,12 @@ public class Main {
         if(commandLine == null || commandLine.hasOption("help")) {
             cmd.usage();
             return;
+        }
+
+        Settings settings = Settings.getInstance();
+        Properties props = commandLine.getOptionProperties("d");
+        for(String name : props.stringPropertyNames()) {
+            settings.set(name, props.getProperty(name));
         }
 
         cmd.execute(commandLine);

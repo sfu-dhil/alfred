@@ -34,11 +34,6 @@ import java.io.IOException;
  */
 public class VSMComparator extends Comparator {
 
-    /**
-     * Matches must be above this threshold to be reported.
-     */
-    public static final double THRESHOLD = 0.9;
-
     private final VectorSpaceModel vsm;
 
     /**
@@ -76,7 +71,7 @@ public class VSMComparator extends Comparator {
     @Override
     public double compare(String aId, String bId) {
         double similarity = vsm.compare(aId, bId);
-        if(similarity >= THRESHOLD) {
+        if(similarity >= settings.getDouble("vsm_threshold")) {
             return Math.min(1.0, similarity);
         } else {
             return 0.0;

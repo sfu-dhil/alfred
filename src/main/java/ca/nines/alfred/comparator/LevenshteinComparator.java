@@ -28,11 +28,6 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
  */
 public class LevenshteinComparator extends Comparator {
 
-    /**
-     * Report matches above this threshold. All others are reported as 0.
-     */
-    public static final double THRESHOLD = 0.6;
-
     public LevenshteinComparator(TextCollection collection, String stopWordsFile) {
         super(collection, stopWordsFile);
     }
@@ -61,7 +56,7 @@ public class LevenshteinComparator extends Comparator {
             return 1.0;
         }
         int maxLength = Math.max(a.length(), b.length());
-        int limit = (int) Math.ceil(maxLength * (1.0 - THRESHOLD));
+        int limit = (int) Math.ceil(maxLength * (1.0 - settings.getDouble("levenshtein_threshold")));
         if(Math.abs(a.length() - b.length()) > limit) {
             return 0;
         }

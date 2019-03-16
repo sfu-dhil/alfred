@@ -26,6 +26,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.atteo.classindex.ClassIndex;
@@ -142,6 +144,8 @@ abstract public class Command {
     public Options getOptions() {
         Options opts = new Options();
         opts.addOption("h", "help", false, "Command description.");
+        Option settings = Option.builder("d").argName("settings").numberOfArgs(2).valueSeparator().desc("Override a default setting").build();
+        opts.addOption(settings);
         return opts;
     }
 

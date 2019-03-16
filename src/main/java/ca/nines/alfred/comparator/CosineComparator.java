@@ -30,11 +30,6 @@ import java.util.regex.Pattern;
 public class CosineComparator extends Comparator {
 
     /**
-     * Minimum similarity. Documents which are less similar are not reported.
-     */
-    public static final double THRESHOLD = 0.9;
-
-    /**
      * The cosine algorithm requires words with letters to operate or it will throw an exception.
      */
     private static final Pattern CHARS = Pattern.compile("[a-zA-Z]");
@@ -72,7 +67,7 @@ public class CosineComparator extends Comparator {
         CosineDistance cd = new CosineDistance();
         double distance = cd.apply(a, b);
         double similarity = 1.0 - distance;
-        if(similarity < THRESHOLD) {
+        if(similarity < settings.getDouble("cosine_threshold")) {
             return 0;
         }
         return similarity;

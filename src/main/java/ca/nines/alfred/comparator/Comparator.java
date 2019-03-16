@@ -18,18 +18,18 @@
 package ca.nines.alfred.comparator;
 
 import ca.nines.alfred.entity.TextCollection;
+import ca.nines.alfred.main.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * Parent class for all comparators.
  */
 abstract public class Comparator {
 
-    /**
-     * Strings shorter than MIN_LENGTH will not be considered.
-     */
-    public static final int MIN_LENGTH = 64;
+    protected Settings settings;
 
     protected final Logger logger;
 
@@ -50,6 +50,7 @@ abstract public class Comparator {
      * @param stopWordsFile name of a stop words file to use.
      */
     public Comparator(TextCollection collection, String stopWordsFile) {
+        settings = Settings.getInstance();
         logger = LoggerFactory.getLogger(this.getClass());
         this.collection = collection;
         this.stopWordsFile = stopWordsFile;

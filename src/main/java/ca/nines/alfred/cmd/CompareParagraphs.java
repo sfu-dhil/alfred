@@ -24,6 +24,7 @@ import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.entity.TextCollection;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
+import ca.nines.alfred.main.Settings;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -49,6 +50,7 @@ public class CompareParagraphs extends CompareCommand {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         TextCollection collection = corpus.getCollection(true);
         Comparator comparator = getComparator(collection, cmd);
+        int minLength = Settings.getInstance().getInt("min_length");
 
         long size = collection.size();
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
@@ -65,8 +67,8 @@ public class CompareParagraphs extends CompareCommand {
                 for (String iId : srcIds) {
                     for (String jId : dstIds) {
                         tick();
-                        if(src.getParagraph(iId).length() < Comparator.MIN_LENGTH ||
-                            dst.getParagraph(jId).length() < Comparator.MIN_LENGTH) {
+                        if(src.getParagraph(iId).length() < minLength ||
+                            dst.getParagraph(jId).length() < minLength ) {
                             continue;
                         }
                         double similarity = 0;
