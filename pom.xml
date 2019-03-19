@@ -12,6 +12,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <jar.finalName>alfred</jar.finalName>
         <lib.dir>lib</lib.dir>
+        <main.class>ca.nines.alfred.main.Main</main.class>
     </properties>
     <build>
         <finalName>${jar.finalName}</finalName>
@@ -71,18 +72,37 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>${project.build.directory}/lib</classpathPrefix>
-                            <mainClass>ca.nines.alfred.main.Main</mainClass>
+                            <mainClass>${main.class}</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
 
+            <!-- build the javadoc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
                     <detectLinks/>
+                </configuration>
+            </plugin>
+
+            <!-- Build a complete jar with the dependencies ready to run. -->
+            <!-- use mvn clean compile assembly:single to create the jar. -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <outputDirectory>${basedir}</outputDirectory>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
             </plugin>
 
