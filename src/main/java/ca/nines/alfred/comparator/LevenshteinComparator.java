@@ -26,6 +26,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
  *
  * @see <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein Distance</a>
  */
+@ComparatorInfo(name="lev", description = "Similarity calculated from Levenshtein distance")
 public class LevenshteinComparator extends Comparator {
 
     public LevenshteinComparator(TextCollection collection, String stopWordsFile) {

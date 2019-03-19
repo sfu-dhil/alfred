@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
  *
  * @see <a href="https://en.wikipedia.org/wiki/Cosine_similarity">Cosine Similarity on Wikipedia</a>
  */
+@ComparatorInfo(name="cos", description = "Cosine similarity")
 public class CosineComparator extends Comparator {
 
     /**

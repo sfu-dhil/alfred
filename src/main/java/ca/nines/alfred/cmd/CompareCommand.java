@@ -53,16 +53,7 @@ abstract public class CompareCommand extends Command {
     Comparator getComparator(TextCollection collection, CommandLine cmd) throws Exception {
         String stopWordsFile = cmd.getOptionValue("stopwords");
         String algorithm = cmd.getOptionValue("algorithm");
-        switch (algorithm) {
-            case "lev":
-                return new LevenshteinComparator(collection, stopWordsFile);
-            case "cos":
-                return new CosineComparator(collection, stopWordsFile);
-            case "vsm":
-                return new VSMComparator(collection, stopWordsFile);
-            default:
-                throw new Exception("Unknown comparison algorithm " + algorithm + ". Expected one of lev cos vsm.");
-        }
+        return Comparator.getComparator(algorithm, collection, stopWordsFile);
     }
 
 }

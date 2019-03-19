@@ -111,7 +111,7 @@ public class Report {
         String html = FileUtils.readFileToString(file, "UTF-8");
         Report report = read(html);
         report.file = file;
-        return read(html);
+        return report;
     }
 
     /**

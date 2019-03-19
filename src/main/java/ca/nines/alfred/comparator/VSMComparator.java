@@ -32,6 +32,7 @@ import java.io.IOException;
  * @see <a href="https://en.wikipedia.org/wiki/Vector_space_model">Vector Space Model on Wikipedia</a>
  * @see <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf">TF-IDF on Wikipedia</a>
  */
+@ComparatorInfo(name="vsm", description = "Vector space model with TF-IDF comparison")
 public class VSMComparator extends Comparator {
 
     private final VectorSpaceModel vsm;
