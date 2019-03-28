@@ -220,7 +220,21 @@ public class Report {
      * @return an array of paragraph IDs.
      */
     public String[] getParagraphIds() {
-        return paragraphs.keySet().toArray(new String[paragraphs.size()]);
+        return getParagraphIds(true);
+    }
+
+    public String[] getParagraphIds(boolean all) {
+        if(all) {
+            return paragraphs.keySet().toArray(new String[paragraphs.size()]);
+        }
+        List<String> ids = new ArrayList<>();
+        for(String id : paragraphs.keySet()) {
+            if(document.selectFirst("#" + id).hasClass("heading")) {
+                continue;
+            }
+            ids.add(id);
+        }
+        return ids.toArray(new String[ids.size()]);
     }
 
     /**

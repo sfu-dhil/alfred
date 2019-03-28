@@ -66,7 +66,7 @@ public class Corpus implements Iterable<Report> {
         TextCollection collection = new TextCollection();
         for(Report report : reports.values()) {
             if(paragraphs) {
-                for(String id : report.getParagraphIds()) {
+                for(String id : report.getParagraphIds(false)) {
                     collection.put(id, report.getParagraph(id));
                 }
             } else {

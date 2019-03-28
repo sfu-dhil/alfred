@@ -31,7 +31,7 @@ public class TextCollection {
 
     private final Logger logger;
 
-    private Map<String, String> collection;
+    private final Map<String, String> collection;
 
     /**
      * Build an empty collection.

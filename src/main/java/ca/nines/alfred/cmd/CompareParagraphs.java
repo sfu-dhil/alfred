@@ -58,11 +58,11 @@ public class CompareParagraphs extends CompareCommand {
         String[] reportIds = corpus.getIds();
         for (int i = 0; i < reportIds.length; i++) {
             Report src = corpus.get(reportIds[i]);
-            String[] srcIds = src.getParagraphIds();
+            String[] srcIds = src.getParagraphIds(false);
 
             for (int j = 0; j < i; j++) {
                 Report dst = corpus.get(reportIds[j]);
-                String[] dstIds = dst.getParagraphIds();
+                String[] dstIds = dst.getParagraphIds(false);
 
                 for (String iId : srcIds) {
                     for (String jId : dstIds) {
