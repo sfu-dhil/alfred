@@ -24,14 +24,14 @@ import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.entity.TextCollection;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
-import ca.nines.alfred.main.Settings;
+import ca.nines.alfred.util.Settings;
 import org.apache.commons.cli.CommandLine;
 
 /**
  * Compare all the paragraphs in the collection of reports.
  */
 @CommandInfo(name = "pc", description = "Paragraph comparisons.")
-public class CompareParagraphs extends CompareCommand {
+public class CompareParagraphs extends Command {
 
     /**
      * {@inheritDoc}
@@ -49,8 +49,6 @@ public class CompareParagraphs extends CompareCommand {
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         TextCollection collection = corpus.getCollection(true);
-        Comparator comparator = getComparator(collection, cmd);
-        int minLength = Settings.getInstance().getInt("min_length");
 
         long size = collection.size();
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
@@ -67,25 +65,15 @@ public class CompareParagraphs extends CompareCommand {
                 for (String iId : srcIds) {
                     for (String jId : dstIds) {
                         tick();
-                        if(src.getParagraph(iId).length() < minLength ||
-                            dst.getParagraph(jId).length() < minLength ) {
-                            continue;
-                        }
-                        double similarity = 0;
-                        try {
-                            similarity = comparator.compare(iId, jId);
-                        } catch (IllegalArgumentException e) {
-                            logger.error("Cannot compare {} to {}: {}", iId, jId, e.getMessage());
-                        }
-                        if (similarity <= 0) {
-                            continue;
-                        }
-                        src.addParagraphSimilarity(iId, new ParagraphSimilarity(
-                                reportIds[j], jId, similarity, comparator.getType()
-                        ));
-                        dst.addParagraphSimilarity(jId, new ParagraphSimilarity(
-                                reportIds[i], iId, similarity, comparator.getType()
-                        ));
+//                        if (similarity <= 0) {
+//                            continue;
+//                        }
+//                        src.addParagraphSimilarity(iId, new ParagraphSimilarity(
+//                                reportIds[j], jId, similarity, comparator.getType()
+//                        ));
+//                        dst.addParagraphSimilarity(jId, new ParagraphSimilarity(
+//                                reportIds[i], iId, similarity, comparator.getType()
+//                        ));
                     }
                 }
             }

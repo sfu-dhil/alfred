@@ -29,7 +29,7 @@ import org.apache.commons.cli.CommandLine;
  * Compare all the documents in the collection of reports.
  */
 @CommandInfo(name = "dc", description = "Document comparisons.")
-public class CompareDocuments extends CompareCommand {
+public class CompareDocuments extends Command {
 
     /**
      * {@inheritDoc}
@@ -38,7 +38,6 @@ public class CompareDocuments extends CompareCommand {
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         TextCollection collection = corpus.getCollection();
-        Comparator comparator = getComparator(collection, cmd);
 
         long size = collection.size();
         String[] ids = collection.keys();
@@ -46,11 +45,10 @@ public class CompareDocuments extends CompareCommand {
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
         for (int i = 0; i < ids.length; i++) {
             for (int j = 0; j < i; j++) {
-                double similarity = comparator.compare(ids[i], ids[j]);
-                if(similarity > 0) {
-                    corpus.get(ids[i]).addDocumentSimilarity(new DocumentSimilarity(ids[j], similarity, comparator.getType()));
-                    corpus.get(ids[j]).addDocumentSimilarity(new DocumentSimilarity(ids[i], similarity, comparator.getType()));
-                }
+//                if(similarity > 0) {
+//                    corpus.get(ids[i]).addDocumentSimilarity(new DocumentSimilarity(ids[j], similarity, comparator.getType()));
+//                    corpus.get(ids[j]).addDocumentSimilarity(new DocumentSimilarity(ids[i], similarity, comparator.getType()));
+//                }
                 tick();
             }
         }

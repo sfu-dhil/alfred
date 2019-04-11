@@ -17,7 +17,7 @@
 
 package ca.nines.alfred.cmd;
 
-import ca.nines.alfred.main.Settings;
+import ca.nines.alfred.util.Settings;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.IOException;

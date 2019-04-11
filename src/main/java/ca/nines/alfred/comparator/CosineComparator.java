@@ -1,76 +1,91 @@
-/*
- * Copyright (C) 2019 Michael Joyce
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
-
 package ca.nines.alfred.comparator;
 
-import ca.nines.alfred.entity.TextCollection;
-import org.apache.commons.text.similarity.CosineDistance;
+import ca.nines.alfred.tokenizer.Tokenizer;
+import ca.nines.alfred.util.Settings;
+import org.apache.commons.collections4.SetUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-/**
- * Uses a cosine distance algorithm to estimate the similarity between two documents.
- *
- * @see <a href="https://en.wikipedia.org/wiki/Cosine_similarity">Cosine Similarity on Wikipedia</a>
- */
-@ComparatorInfo(name="cos", description = "Cosine similarity")
-public class CosineComparator extends Comparator {
+public class CosineComparator implements Comparator {
 
-    /**
-     * The cosine algorithm requires words with letters to operate or it will throw an exception.
-     */
-    private static final Pattern CHARS = Pattern.compile("[a-zA-Z]");
+    final Map<String, Map<String, Integer>> termCount;
 
-    public CosineComparator(TextCollection collection, String stopWordsFile) {
-        super(collection, stopWordsFile);
+    final Tokenizer tokenizer;
+
+    final Logger logger;
+
+    final int minLength;
+
+    final double threshold;
+
+    public CosineComparator(Tokenizer tokenizer) {
+        this.tokenizer = tokenizer;
+        termCount = new HashMap<>();
+        minLength = Settings.getInstance().getInt("min_length");
+        threshold = Settings.getInstance().getDouble("cos_threshold");
+        logger = LoggerFactory.getLogger(getClass());
     }
 
-    @Override
-    public String getType() {
-        return "cos";
+    public void add(String id, String content) {
+        if(content.length() < minLength) {
+            return;
+        }
+
+        if(termCount.containsKey(id)) {
+            logger.error("ID {} has already been added to the comparator. Skipping.", id);
+            return;
+        }
+
+        Map<String, Integer> counts = new HashMap<>();
+        for(String token : tokenizer.segment(content)) {
+            if( ! counts.containsKey(token)) {
+                counts.put(token, 0);
+            }
+            counts.put(token, counts.get(token)+1);
+        }
+
+        termCount.put(id, counts);
     }
 
-    @Override
-    public double compare(String aId, String bId) {
-        String aContent = collection.get(aId);
-        String bContent = collection.get(bId);
-        return cosine(aContent, bContent);
+    public void complete() {
+        // do nothing.
     }
 
-    /**
-     * Calculate the cosine distance and estimate the similarity from it.
-     *
-     * @param a first text to compare
-     * @param b second text to compare
-     * @return a percentage match of the two documents
-     */
-    double cosine(String a, String b) {
-        if(a.length() == 0 || b.length() == 0) {
+    public double compare(String srcId, String dstId) {
+        Map<String, Integer> srcCounts = termCount.get(srcId);
+        Map<String, Integer> dstCounts = termCount.get(dstId);
+
+        if(srcCounts == null || dstCounts == null) {
             return 0;
         }
-        if( ! CHARS.matcher(a).find() || ! CHARS.matcher(b).find()) {
-            return 0;
+
+        Set<String> common = SetUtils.intersection(srcCounts.keySet(), dstCounts.keySet());
+
+        double numerator = 0;
+        for(String term : common) {
+            numerator += srcCounts.get(term) * dstCounts.get(term);
         }
-        CosineDistance cd = new CosineDistance();
-        double distance = cd.apply(a, b);
-        double similarity = 1.0 - distance;
-        if(similarity < settings.getDouble("cosine_threshold")) {
+
+        double srcDenominator = 0;
+        for(String term : srcCounts.keySet()) {
+            srcDenominator += srcCounts.get(term) * srcCounts.get(term);
+
+        }
+
+        double dstDenominator = 0;
+        for(String term : dstCounts.keySet()) {
+            dstDenominator += dstCounts.get(term) * dstCounts.get(term);
+        }
+
+        double similarity = numerator / (Math.sqrt(srcDenominator) * Math.sqrt(dstDenominator));
+        if(similarity < threshold) {
             return 0;
         }
         return similarity;
     }
+
 }
