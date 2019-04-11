@@ -59,11 +59,7 @@ public class LevenshteinComparator implements Comparator  {
         if (distance <= 0) {
             return 0;
         }
-        double similarity = 1.0 - (distance / ((double) maxLength));
-        if(similarity < threshold) {
-            return 0;
-        }
-        return similarity;
+        return 1.0 - (distance / ((double) maxLength));
     }
 
 }

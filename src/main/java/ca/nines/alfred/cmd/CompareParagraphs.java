@@ -17,14 +17,10 @@
 
 package ca.nines.alfred.cmd;
 
-import ca.nines.alfred.comparator.Comparator;
 import ca.nines.alfred.entity.Corpus;
-import ca.nines.alfred.entity.ParagraphSimilarity;
 import ca.nines.alfred.entity.Report;
-import ca.nines.alfred.entity.TextCollection;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
-import ca.nines.alfred.util.Settings;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -48,37 +44,8 @@ public class CompareParagraphs extends Command {
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
-        TextCollection collection = corpus.getCollection(true);
 
-        long size = collection.size();
+        long size = corpus.size();
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
-
-        String[] reportIds = corpus.getIds();
-        for (int i = 0; i < reportIds.length; i++) {
-            Report src = corpus.get(reportIds[i]);
-            String[] srcIds = src.getParagraphIds(false);
-
-            for (int j = 0; j < i; j++) {
-                Report dst = corpus.get(reportIds[j]);
-                String[] dstIds = dst.getParagraphIds(false);
-
-                for (String iId : srcIds) {
-                    for (String jId : dstIds) {
-                        tick();
-//                        if (similarity <= 0) {
-//                            continue;
-//                        }
-//                        src.addParagraphSimilarity(iId, new ParagraphSimilarity(
-//                                reportIds[j], jId, similarity, comparator.getType()
-//                        ));
-//                        dst.addParagraphSimilarity(jId, new ParagraphSimilarity(
-//                                reportIds[i], iId, similarity, comparator.getType()
-//                        ));
-                    }
-                }
-            }
-        }
-        reset();
-        CorpusWriter.write(corpus);
     }
 }

@@ -17,10 +17,8 @@
 
 package ca.nines.alfred.entity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,24 +54,6 @@ public class Corpus implements Iterable<Report> {
 
     public int size() {
         return reports.size();
-    }
-
-    public TextCollection getCollection() {
-        return getCollection(false);
-    }
-
-    public TextCollection getCollection(boolean paragraphs) {
-        TextCollection collection = new TextCollection();
-        for(Report report : reports.values()) {
-            if(paragraphs) {
-                for(String id : report.getParagraphIds(false)) {
-                    collection.put(id, report.getParagraph(id));
-                }
-            } else {
-                collection.put(report.getId(), report.getComparableContent());
-            }
-        }
-        return collection;
     }
 
     @Override

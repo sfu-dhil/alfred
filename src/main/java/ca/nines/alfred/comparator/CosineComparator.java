@@ -36,7 +36,7 @@ public class CosineComparator implements Comparator {
         }
 
         if(termCount.containsKey(id)) {
-            logger.error("ID {} has already been added to the comparator. Skipping.", id);
+            logger.warn("ID {} has already been added to the comparator. Skipping.", id);
             return;
         }
 
@@ -52,7 +52,7 @@ public class CosineComparator implements Comparator {
     }
 
     public void complete() {
-        // do nothing.
+        logger.info("LEV contains {} documents. Match threshold is {}.", termCount.size(), threshold);
     }
 
     public double compare(String srcId, String dstId) {

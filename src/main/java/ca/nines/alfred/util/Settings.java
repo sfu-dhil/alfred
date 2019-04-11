@@ -20,8 +20,8 @@ public class Settings {
     public static Settings getInstance() {
         if(instance == null) {
             instance = new Settings();
+            instance.reset();
         }
-        instance.reset();
         return instance;
     }
 

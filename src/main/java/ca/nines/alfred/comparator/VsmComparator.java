@@ -37,14 +37,19 @@ public class VsmComparator implements Comparator {
 
     public void add(String id, String content) {
         if(complete) {
-            logger.error("Cannot add {} after completing the model.");
+            throw new RuntimeException("Cannot add after completing the model.");
         }
+
+        if(model.containsKey(id)) {
+            logger.warn("ID {} has already been added to the comparator. Skipping.", id);
+            return;
+        }
+
         if (content.length() < minLength) {
             return;
         }
 
         Map<String, Double> w = new HashMap<>();
-
         for (String term : tokenizer.tokenize(content)) {
             if (!w.containsKey(term)) {
                 w.put(term, 0.0);

@@ -14,6 +14,7 @@ public class SettingsTest {
     @Before
     public void setUp() throws IOException {
         settings = Settings.getInstance();
+        settings.reset();
     }
 
     @Test
