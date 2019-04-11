@@ -144,7 +144,6 @@
                 </executions>
             </plugin>
 
-
             <!-- Clean the jar and result directory. -->
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>

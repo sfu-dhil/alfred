@@ -12,14 +12,14 @@ public class WordNGramTokenizer implements Tokenizer {
     }
 
     @Override
-    public List<String> segment(String text) {
+    public List<String> tokenize(String text) {
         List<String> segments = new ArrayList<>();
         if(text == null || text.equals("")) {
             return segments;
         }
 
         WordTokenizer s = new WordTokenizer();
-        List<String> words = s.segment(text);
+        List<String> words = s.tokenize(text);
 
         if(words.size() < size) {
             segments.add(String.join(" ", words));

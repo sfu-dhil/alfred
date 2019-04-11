@@ -7,7 +7,7 @@ import java.util.List;
 public class WordTokenizer implements Tokenizer {
 
     @Override
-    public List<String> segment(String text) {
+    public List<String> tokenize(String text) {
         if(text == null || text.equals("")) {
             return new ArrayList<>();
         }

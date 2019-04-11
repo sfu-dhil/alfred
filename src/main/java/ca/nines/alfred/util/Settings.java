@@ -20,15 +20,8 @@ public class Settings {
     public static Settings getInstance() {
         if(instance == null) {
             instance = new Settings();
-            instance.properties = new Properties();
-            InputStream in = Settings.class.getResourceAsStream("/defaults.properties");
-            try {
-                instance.properties.load(in);
-                in.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
+        instance.reset();
         return instance;
     }
 
@@ -36,11 +29,22 @@ public class Settings {
         logger = LoggerFactory.getLogger(this.getClass());
     }
 
+    void reset() {
+        instance.properties = new Properties();
+        InputStream in = Settings.class.getResourceAsStream("/defaults.properties");
+        try {
+            instance.properties.load(in);
+            in.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int getInt(String name) {
         if(properties.containsKey(name)) {
             return Integer.parseInt(properties.getProperty(name));
         } else {
-            logger.error("Unknown setting name " + name);
+            logger.warn("Unknown setting name " + name);
         }
         return 0;
     }
@@ -49,7 +53,7 @@ public class Settings {
         if(properties.containsKey(name)) {
             return Double.parseDouble(properties.getProperty(name));
         } else {
-            logger.error("Unknown setting name " + name);
+            logger.warn("Unknown setting name " + name);
         }
         return 0;
     }
@@ -58,7 +62,7 @@ public class Settings {
         if(properties.containsKey(name)) {
             return properties.getProperty(name);
         } else {
-            logger.error("Unknown setting name " + name);
+            logger.warn("Unknown setting name " + name);
         }
         return null;
     }

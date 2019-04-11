@@ -12,7 +12,7 @@ public class CharNGramTokenizer implements Tokenizer {
     }
 
     @Override
-    public List<String> segment(String text) {
+    public List<String> tokenize(String text) {
         List<String> segments = new ArrayList<>();
         if(text == null || text.equals("")) {
             return segments;

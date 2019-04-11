@@ -38,9 +38,9 @@ public class SettingsCmd extends Command {
         Formatter formatter = new Formatter(out);
 
         out.println("Configurable settings: ");
-        formatter.format("%32s   %s%n", "Name", "Value");
+        formatter.format("%16s  %s%n", "Name", "Value");
         for(String name : settings.list()) {
-            formatter.format("%32s   %s%n", name, settings.getString(name));
+            formatter.format("%16s  %s%n", name, settings.getString(name));
         }
         out.println("Use -d name=value to modify.");
     }

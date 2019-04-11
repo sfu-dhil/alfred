@@ -41,7 +41,7 @@ public class CosineComparator implements Comparator {
         }
 
         Map<String, Integer> counts = new HashMap<>();
-        for(String token : tokenizer.segment(content)) {
+        for(String token : tokenizer.tokenize(content)) {
             if( ! counts.containsKey(token)) {
                 counts.put(token, 0);
             }

@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface Tokenizer {
 
-    public List<String> segment(String text);
+    public List<String> tokenize(String text);
 
 }

@@ -45,7 +45,7 @@ public class VsmComparator implements Comparator {
 
         Map<String, Double> w = new HashMap<>();
 
-        for (String term : tokenizer.segment(content)) {
+        for (String term : tokenizer.tokenize(content)) {
             if (!w.containsKey(term)) {
                 w.put(term, 0.0);
                 if (!docTermCounts.containsKey(term)) {
