@@ -9,20 +9,17 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LevenshteinComparator implements Comparator  {
+public class ExactComparator implements Comparator  {
 
     final Map<String, String> text;
 
     final Logger logger;
 
-    final double threshold;
-
     final int minLength;
 
-    public LevenshteinComparator() {
+    public ExactComparator() {
         logger = LoggerFactory.getLogger(getClass());
         text = new HashMap<>();
-        threshold = Settings.getInstance().getDouble("lev_threshold");
         minLength = Settings.getInstance().getInt("min_length");
     }
 
@@ -34,7 +31,7 @@ public class LevenshteinComparator implements Comparator  {
     }
 
     public void complete() {
-        logger.info("LEV contains {} documents. Match threshold is {}.", text.size(), threshold);
+        logger.info("EXT contains {} documents.", text.size());
     }
 
     public double compare(String srcId, String dstId) {
@@ -48,18 +45,7 @@ public class LevenshteinComparator implements Comparator  {
         if(a.equals(b)) {
             return 1.0;
         }
-
-        int maxLength = Math.max(a.length(), b.length());
-        int limit = (int) Math.ceil(maxLength * (1.0 - threshold));
-        if(Math.abs(a.length() - b.length()) > limit) {
-            return 0;
-        }
-        LevenshteinDistance ld = new LevenshteinDistance(limit);
-        int distance = ld.apply(a, b);
-        if (distance <= 0) {
-            return 0;
-        }
-        return 1.0 - (distance / ((double) maxLength));
+        return 0;
     }
 
 }

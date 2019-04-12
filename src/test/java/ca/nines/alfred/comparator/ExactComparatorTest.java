@@ -4,22 +4,20 @@ import ca.nines.alfred.util.Settings;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
+public class ExactComparatorTest {
 
-public class LevenshteinComparatorTest {
-
-    private LevenshteinComparator comparator;
+    private ExactComparator comparator;
 
     @Before
     public void setUp() {
         Settings settings = Settings.getInstance();
-        // The test settings file doesn't have these settings.
-        settings.set("lev_threshold", "0.6");
+        // The test settings file doesn't have this setting.
         settings.set("min_length", "5");
 
-        comparator = new LevenshteinComparator();
+        comparator = new ExactComparator();
     }
 
     @Test
@@ -40,7 +38,7 @@ public class LevenshteinComparatorTest {
     public void compare() {
         comparator.add("a", "I am the very model of a general.");
         comparator.add("b", "I am the very model of a modern general.");
-        assertEquals(0.825, comparator.compare("a", "b"), 0.001);
+        assertEquals(0.0, comparator.compare("a", "b"), 0.001);
     }
 
     @Test
@@ -53,20 +51,6 @@ public class LevenshteinComparatorTest {
     public void compareNonExistent() {
         comparator.add("a", "I am the very model of a general.");
         assertEquals(0.0, comparator.compare("a", "cheese"), 0.001);
-    }
-
-    @Test
-    public void compareDifferentSizes() {
-        comparator.add("a", "I am the very model of a modern major general.");
-        comparator.add("b", "I am the general.");
-        assertEquals(0.0, comparator.compare("a", "b"), 0.001);
-    }
-
-    @Test
-    public void compareDifferentTexts() {
-        comparator.add("a", "I am the very model of a modern major general.");
-        comparator.add("b", "Let me know what you think -- and thanks for.");
-        assertEquals(0.0, comparator.compare("a", "b"), 0.001);
     }
 
 }
