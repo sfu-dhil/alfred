@@ -36,7 +36,7 @@ public class CorpusReader {
      * @return the parsed reports
      * @throws IOException if the reports cannot be read
      */
-    public static Corpus read(String roots[]) throws IOException {
+    public static Corpus read(String[] roots) throws IOException {
         Corpus corpus = new Corpus();
         for(String root : roots) {
             corpus.add(read(root));
@@ -52,7 +52,7 @@ public class CorpusReader {
      * @return the parsed reports
      * @throws IOException if the reports cannot be read
      */
-    public static Corpus read(String roots[], String[] extensions) throws IOException {
+    public static Corpus read(String[] roots, String[] extensions) throws IOException {
         Corpus corpus = new Corpus();
         for(String root : roots) {
             corpus.add(read(root, extensions));

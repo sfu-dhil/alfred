@@ -18,15 +18,14 @@
 package ca.nines.alfred.main;
 
 import ca.nines.alfred.cmd.Command;
+import ca.nines.alfred.util.Settings;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.Properties;
-
-import ca.nines.alfred.util.Settings;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
 
 /**
  * This class handles the main command prompt interface of the application. It

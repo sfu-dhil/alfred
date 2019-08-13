@@ -8,4 +8,6 @@ public interface Comparator {
 
     double compare(String srcId, String dstId);
 
+    long size();
+
 }

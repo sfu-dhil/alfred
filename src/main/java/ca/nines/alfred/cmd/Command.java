@@ -17,27 +17,23 @@
 
 package ca.nines.alfred.cmd;
 
-import java.io.PrintStream;
-import java.lang.reflect.Modifier;
-import java.text.NumberFormat;
-import java.util.*;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.atteo.classindex.ClassIndex;
 import org.atteo.classindex.IndexSubclasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintStream;
+import java.lang.reflect.Modifier;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * Parent class for all commands understood by the application. Classes must also be annotated with {@link CommandInfo}
- * to be picked up by the command dispatcher. Abstract subclassses like {@link CompareCommand} are automatically
- * ignored.
+ * to be picked up by the command dispatcher. Abstract subclassses are automatically ignored.
  */
 @IndexSubclasses
 abstract public class Command {
@@ -119,7 +115,7 @@ abstract public class Command {
      *
      * @return mapping of command names to command classes.
      */
-    public static final Map<String, Class<? extends Command>> getCommandList() {
+    public static Map<String, Class<? extends Command>> getCommandList() {
         if (commandList.isEmpty()) {
             for (Class<? extends Command> cls : ClassIndex.getSubclasses(Command.class)) {
                 if(Modifier.isAbstract(cls.getModifiers())) {

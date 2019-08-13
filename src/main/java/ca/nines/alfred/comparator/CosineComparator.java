@@ -51,6 +51,10 @@ public class CosineComparator implements Comparator {
         termCount.put(id, counts);
     }
 
+    public long size() {
+        return termCount.size();
+    }
+
     public void complete() {
         logger.info("LEV contains {} documents. Match threshold is {}.", termCount.size(), threshold);
     }

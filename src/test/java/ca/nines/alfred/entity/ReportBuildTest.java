@@ -98,11 +98,11 @@ public class ReportBuildTest {
         assertThat(report.translatedContent, startsWith("but i had almost anticipated"));
     }
 
-    @Test
-    public void buildParagraphs() {
-        assertEquals(2, report.paragraphs.size());
-        assertThat(report.paragraphs.get("lga_590_2_tr"), startsWith("but i had almost anticipated"));
-        assertEquals("paul roche", report.paragraphs.get("lga_590_13_tr"));
-    }
+//    @Test
+//    public void buildParagraphs() {
+//        assertEquals(2, report.paragraphs.size());
+//        assertThat(report.paragraphs.get("lga_590_2_tr"), startsWith("but i had almost anticipated"));
+//        assertEquals("paul roche", report.paragraphs.get("lga_590_13_tr"));
+//    }
 
 }

@@ -63,6 +63,10 @@ public class VsmComparator implements Comparator {
         model.put(id, w);
    }
 
+   public long size() {
+        return model.size();
+   }
+
     public void complete() {
         logger.info("VSM contains {} documents. Match threshold is {}.", model.size(), threshold);
         logger.info("VSM using {} tokenizer.", tokenizer.getClass().getSimpleName());

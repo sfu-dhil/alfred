@@ -17,10 +17,15 @@
 
 package ca.nines.alfred.cmd;
 
+import ca.nines.alfred.comparator.Comparator;
+import ca.nines.alfred.comparator.ExactComparator;
+import ca.nines.alfred.comparator.LevenshteinComparator;
 import ca.nines.alfred.entity.Corpus;
+import ca.nines.alfred.entity.ParagraphSimilarity;
 import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
+import ca.nines.alfred.util.Text;
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -31,21 +36,58 @@ public class CompareParagraphs extends Command {
 
     /**
      * {@inheritDoc}
-     * Sets the tick size to 10,000 because the ticks are fast and furious.
-     */
-    public CompareParagraphs() {
-        super();
-        tickSize = 10000;
-    }
-
-    /**
-     * {@inheritDoc}
      */
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
 
+        Comparator ext = new ExactComparator();
+        Comparator lev = new LevenshteinComparator();
+
+        for(Report report : corpus) {
+            for(String id : report.getParagraphIds(false)) {
+                ext.add(id, Text.normalize(report.getParagraph(id)));
+                lev.add(id, Text.normalize(report.getParagraph(id)));
+            }
+        }
+        ext.complete();
+        lev.complete();
+
         long size = corpus.size();
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
+        String[] ids = corpus.getIds();
+
+        for(int i = 0; i < size; i++) {
+            String srcId = ids[i];
+            Report srcReport = corpus.get(srcId);
+            for (int j = 0; j < i; j++) {
+                tick();
+
+                String dstId = ids[j];
+                Report dstReport = corpus.get(dstId);
+
+                if( ! srcReport.getLanguage().equals(dstReport.getLanguage())) {
+                    continue;
+                }
+
+                for(String m : srcReport.getParagraphIds()) {
+                    for(String n : dstReport.getParagraphIds()) {
+                        if(ext.compare(m, n) > 0) {
+                            srcReport.addParagraphSimilarity(m, new ParagraphSimilarity(dstId, n, 1.0, "exact"));
+                            dstReport.addParagraphSimilarity(n, new ParagraphSimilarity(srcId, m, 1.0, "exact"));
+                            continue;
+                        }
+                        double ls = lev.compare(m, n);
+                        if(ls > 0) {
+                            srcReport.addParagraphSimilarity(m, new ParagraphSimilarity(dstId, n, ls, "lev"));
+                            dstReport.addParagraphSimilarity(n, new ParagraphSimilarity(srcId, m, ls, "lev"));
+                        }
+                    }
+                }
+            }
+        }
+
+        reset();
+        CorpusWriter.write(corpus);
     }
 }

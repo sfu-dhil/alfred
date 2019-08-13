@@ -29,11 +29,7 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * A report object is the metadata and content of one report file stored on disk.
@@ -163,12 +159,7 @@ public class Report {
             report.translatedContent = Text.normalize(div.text());
         }
 
-        Elements paragraphs = null;
-        if(report.getMetadata("dc.language").equals("en")) {
-            paragraphs = document.select("#original p");
-        } else {
-            paragraphs = document.select("#translation p");
-        }
+        Elements paragraphs = document.select("#original p");
         for(Element p : paragraphs) {
             report.paragraphs.put(p.id(), Text.normalize(p.text()));
         }
@@ -349,6 +340,10 @@ public class Report {
      */
     public boolean hasMetadata(String name) {
         return metadata.containsKey(name);
+    }
+
+    public String getLanguage() {
+        return metadata.get("dc.language");
     }
 
     /**

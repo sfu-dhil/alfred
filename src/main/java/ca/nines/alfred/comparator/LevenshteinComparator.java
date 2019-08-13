@@ -1,7 +1,6 @@
 package ca.nines.alfred.comparator;
 
 import ca.nines.alfred.util.Settings;
-import ca.nines.alfred.util.Text;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +30,10 @@ public class LevenshteinComparator implements Comparator  {
             return;
         }
         text.put(id, content);
+    }
+
+    public long size() {
+        return text.size();
     }
 
     public void complete() {

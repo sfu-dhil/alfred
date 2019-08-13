@@ -22,12 +22,11 @@ import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
 import com.google.cloud.translate.Translate;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-
 import com.google.cloud.translate.Translate.TranslateOption;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 
 /**
  * Translate all the reports using the Google Translate API.
