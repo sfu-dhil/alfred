@@ -56,7 +56,7 @@ public class CosineComparator implements Comparator {
     }
 
     public void complete() {
-        logger.info("LEV contains {} documents. Match threshold is {}.", termCount.size(), threshold);
+        logger.info("COS contains {} documents. Match threshold is {}.", termCount.size(), threshold);
     }
 
     public double compare(String srcId, String dstId) {
