@@ -153,7 +153,7 @@ public class Report {
            report.paragraphSimilarities.put(p.id(), similarities);
         }
 
-        report.content = Text.normalize(document.getElementById("original").text());
+        report.content = Text.normalize(document.getElementById("original").select("p:not(.heading)").text());
         Element div = document.selectFirst("#translation");
         if(div != null) {
             report.translatedContent = Text.normalize(div.text());

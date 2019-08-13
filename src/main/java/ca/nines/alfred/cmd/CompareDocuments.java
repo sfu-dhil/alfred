@@ -59,6 +59,9 @@ public class CompareDocuments extends Command {
             lev.add(report.getId(), Text.normalize(report.getContent()));
             cos.add(report.getId(), Text.normalize(report.getContent()));
         }
+        ext.complete();
+        lev.complete();
+        cos.complete();
 
         for(int i = 0; i < size; i++) {
             String srcId = ids[i];
@@ -72,12 +75,12 @@ public class CompareDocuments extends Command {
                     continue;
                 }
 
-                double ls = lev.compare(srcId, dstId);
                 if(ext.compare(srcId, dstId) > 0) {
                     srcReport.addDocumentSimilarity(new DocumentSimilarity(dstId, 1.0, "exact"));
                     dstReport.addDocumentSimilarity(new DocumentSimilarity(srcId, 1.0, "exact"));
                     continue;
                 }
+                double ls = lev.compare(srcId, dstId);
                 if(ls > 0) {
                     srcReport.addDocumentSimilarity(new DocumentSimilarity(dstId, ls, "lev"));
                     dstReport.addDocumentSimilarity(new DocumentSimilarity(srcId, ls, "lev"));

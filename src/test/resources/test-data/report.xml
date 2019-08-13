@@ -11,6 +11,7 @@
     </head>
     <body>
         <div id="original" lang="fr">
+            <p id="abc_123_1" class="heading">cheese is good</p>
             <p id="lga_590_2">Mais, je l'avais presque prévue cette fin de M. Oscar Wilde, nous dit M. Max Nordau, en
                 nous accueillant avec sa bonne grâce accoutumée. Et vous me voyez même fort embarrassé pour vous parler
                 de lui, car l'ayant attaqué comme je l'ai fait quand il était triomphant, j'ai des scrupules, à revenir

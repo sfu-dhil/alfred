@@ -14,7 +14,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
 @RunWith(DataProviderRunner.class)
@@ -89,7 +91,13 @@ public class ReportBuildTest {
     }
 
     @Test
+    public void buildHeading() {
+        assertThat(report.content, not(containsString("cheese")));
+    }
+
+    @Test
     public void buildContent() {
+
         assertThat(report.content, startsWith("mais je lavais presque"));
     }
 
