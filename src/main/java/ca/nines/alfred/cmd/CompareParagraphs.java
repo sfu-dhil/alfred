@@ -92,8 +92,8 @@ public class CompareParagraphs extends Command {
                         }
                         double cs = cos.compare(m,n);
                         if(cs > 0) {
-                            srcReport.addParagraphSimilarity(m, new ParagraphSimilarity(dstId, n, ls, "cos"));
-                            dstReport.addParagraphSimilarity(n, new ParagraphSimilarity(srcId, m, ls, "cos"));
+                            srcReport.addParagraphSimilarity(m, new ParagraphSimilarity(dstId, n, cs, "cos"));
+                            dstReport.addParagraphSimilarity(n, new ParagraphSimilarity(srcId, m, cs, "cos"));
                         }
                     }
                 }
