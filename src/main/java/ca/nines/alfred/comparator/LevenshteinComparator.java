@@ -59,10 +59,11 @@ public class LevenshteinComparator implements Comparator  {
         }
         LevenshteinDistance ld = new LevenshteinDistance(limit);
         int distance = ld.apply(a, b);
-        if (distance <= 0) {
+        double similarity = 1.0 - (distance / ((double) maxLength));
+        if (distance <= 0 || similarity < threshold) {
             return 0;
         }
-        return 1.0 - (distance / ((double) maxLength));
+        return similarity;
     }
 
 }
