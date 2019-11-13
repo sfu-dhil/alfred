@@ -27,11 +27,19 @@ public class ParagraphSimilarity {
 
     private String type;
 
+    private String paperId;
+
     public ParagraphSimilarity(String reportId, String paragraphId, double similarity, String type) {
         this.reportId = reportId;
         this.paragraphId = paragraphId;
         this.similarity = similarity;
         this.type = type;
+        this.paperId = null;
+    }
+
+    public ParagraphSimilarity(String reportId, String paragraphId, double similarity, String type, String paperId) {
+        this(reportId, paragraphId,similarity,type);
+        this.paperId = paperId;
     }
 
     public String getReportId() {
@@ -48,5 +56,13 @@ public class ParagraphSimilarity {
 
     public String getType() {
         return type;
+    }
+
+    public String getPaperId() {
+        return paperId;
+    }
+
+    public void setPaperId(String paperId) {
+        this.paperId = paperId;
     }
 }

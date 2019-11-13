@@ -125,6 +125,9 @@ abstract public class Command {
                 if(props == null) {
                     continue;
                 }
+                if(commandList.containsKey(props.name())) {
+                    System.err.println("Duplicate command " + props.name());
+                }
                 commandList.put(props.name(), cls);
             }
         }

@@ -412,7 +412,9 @@ public class Report {
             meta.appendTo(document.head());
         }
 
+        // Remove all link and a elements and replace them with new creations.
         document.select(".similarity").remove();
+
         for(DocumentSimilarity s : documentSimilarities) {
             Element link = new Element("link");
             link.attr("href", s.getReportId());
@@ -420,6 +422,9 @@ public class Report {
             link.attr("rel", "similarity");
             link.attr("data-similarity", "" + s.getSimilarity());
             link.attr("data-type", s.getType());
+            if(s.getPaperId() != null) {
+                link.attr("data-paper-id", s.getPaperId());
+            }
             link.appendTo(document.head());
         }
 
@@ -435,6 +440,9 @@ public class Report {
                 a.attr("data-paragraph", s.getParagraphId());
                 a.attr("data-similarity", "" + s.getSimilarity());
                 a.attr("data-type", s.getType());
+                if(s.getPaperId() != null) {
+                    a.attr("data-paper-id", s.getPaperId());
+                }
                 a.appendTo(p);
             }
         }
@@ -446,4 +454,15 @@ public class Report {
         return document.html();
     }
 
+    public List<DocumentSimilarity> getDocumentSimilarities() {
+        return this.documentSimilarities;
+    }
+
+    public List<ParagraphSimilarity> getParagraphSimilarities() {
+        List<ParagraphSimilarity> similarities = new ArrayList<>();
+        for(List<ParagraphSimilarity> lp : paragraphSimilarities.values()) {
+            similarities.addAll(lp);
+        }
+        return similarities;
+    }
 }

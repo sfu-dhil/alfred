@@ -21,6 +21,8 @@ public class DocumentSimilarity {
 
     private String reportId;
 
+    private String paperId;
+
     private double similarity;
 
     private String type;
@@ -29,6 +31,12 @@ public class DocumentSimilarity {
         this.reportId = reportId;
         this.similarity = similarity;
         this.type = type;
+        this.paperId = null;
+    }
+
+    public DocumentSimilarity(String reportId, double similarity, String type, String paperId) {
+        this(reportId, similarity, type);
+        this.paperId = paperId;
     }
 
     public String getReportId() {
@@ -41,5 +49,13 @@ public class DocumentSimilarity {
 
     public String getType() {
         return type;
+    }
+
+    public String getPaperId() {
+        return paperId;
+    }
+
+    public void setPaperId(String paperId) {
+        this.paperId = paperId;
     }
 }
