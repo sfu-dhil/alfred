@@ -40,12 +40,22 @@ public class CorpusWriter {
      */
     public static void write(Corpus corpus) throws IOException {
         for(Report report : corpus) {
-            if(report.getFile() == null) {
-                logger.error("Cannot write report {} to disk: unknown file.", report.getId());
-                continue;
-            }
-            FileUtils.writeStringToFile(report.getFile(), report.serialize(), "UTF-8");
+            write(report);
         }
+    }
+
+    /**
+     * Write the contents of one report to disk.
+     *
+     * @param report
+     * @throws IOException
+     */
+    public static void write(Report report) throws IOException {
+        if(report.getFile() == null) {
+            logger.error("Cannot write report {} to disk: unknown file.", report.getId());
+            return;
+        }
+        FileUtils.writeStringToFile(report.getFile(), report.serialize(), "UTF-8");
     }
 
 }

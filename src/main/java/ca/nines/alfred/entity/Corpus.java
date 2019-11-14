@@ -29,11 +29,18 @@ public class Corpus implements Iterable<Report> {
 
     Map<String, Report> reports;
 
+    private int n = 0;
+
     public Corpus() {
         reports = new HashMap<>();
     }
 
     public void add(Report report) {
+        if(reports.containsKey(report.getId())) {
+            System.err.println("Duplicate report key '" + report.getId() + "'");
+            n++;
+            report.setId("_" + n);
+        }
         reports.put(report.getId(), report);
     }
 

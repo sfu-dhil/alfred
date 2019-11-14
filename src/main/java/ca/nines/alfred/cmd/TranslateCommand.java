@@ -21,6 +21,7 @@ import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
+import ca.nines.alfred.util.Settings;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.Translate.TranslateOption;
 import com.google.cloud.translate.TranslateOptions;
@@ -53,6 +54,8 @@ public class TranslateCommand extends Command {
      */
     @Override
     public void execute(CommandLine cmd) throws Exception {
+        long waitTime = Settings.getInstance().getInt("translate_wait");
+
         if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS") == null) {
             throw new Exception("The GOOGLE_APPLICATION_CREDENTIALS environment variable must be set.");
         }
@@ -61,15 +64,13 @@ public class TranslateCommand extends Command {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         for (Report report : corpus) {
             if (report.getMetadata("dc.language").equals("en")) {
-                logger.info("S (en): {}", report.getFile().getName());
                 continue;
             }
             if (!cmd.hasOption("force") && report.hasMetadata("wr.translated") && report.getMetadata("wr.translated").equals("yes")) {
-                logger.info("S (tr): {}", report.getFile().getName());
                 continue;
             }
 
-            logger.info("T ({}): {}", report.getMetadata("dc.language"), report.getFile().getName());
+            logger.info("{}: {}", report.getMetadata("dc.language"), report.getFile().getName());
             Translation translation = translator.translate(
                     report.getContentHtml(),
                     TranslateOption.sourceLanguage(report.getMetadata("dc.language")),
@@ -77,8 +78,8 @@ public class TranslateCommand extends Command {
                     TranslateOption.format("html"));
 
             report.setTranslation(translation.getTranslatedText());
-            Thread.sleep(1000); // sleep for one second.
+            CorpusWriter.write(report);
+            Thread.sleep(waitTime); // sleep for one second.
         }
-        CorpusWriter.write(corpus);
     }
 }

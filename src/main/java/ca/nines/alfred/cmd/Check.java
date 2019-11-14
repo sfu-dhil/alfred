@@ -27,11 +27,19 @@ import org.apache.commons.cli.Options;
 /**
  * Clean removes added metadata from the reports XML.
  */
-@CommandInfo(name="format", description="Format the files in a directory.")
-public class Format extends Command {
+@CommandInfo(name="check", description="Check the metadata in the files in a directory.")
+public class Check extends Command {
+
+    static String[] required = {
+            "dc.language",
+            "dc.date",
+            "dc.publisher",
+            "dc.region",
+            "dc.region.city",
+    };
 
     /**
-     * Read all the XML documents in one or more directories and format them. Writes the formatted XML back to the
+     * Read all the XML documents in one or more directories and clean them. Writes the cleaned XML back to the
      * file.
      *
      * @param cmd Parsed command line.
@@ -40,6 +48,15 @@ public class Format extends Command {
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
+        for(Report report : corpus) {
+            StringBuilder sb = new StringBuilder();
+            if( ! report.hasMetadata("dc.language")) {
+                sb.append(" - dc.language\n");
+            }
+            if(sb.length() > 0) {
+                System.out.println(report.getFile().getPath() + " is missing some metadata:\n" + sb.toString());
+            }
+        }
         CorpusWriter.write(corpus);
     }
 
