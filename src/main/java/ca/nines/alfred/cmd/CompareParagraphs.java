@@ -46,20 +46,14 @@ public class CompareParagraphs extends Command {
 
         Tokenizer words = new WordTokenizer();
 
-        Comparator ext = new ExactComparator();
         Comparator lev = new LevenshteinComparator();
-        Comparator cos = new CosineComparator(words);
 
         for(Report report : corpus) {
             for(String id : report.getParagraphIds(false)) {
-                ext.add(id, Text.normalize(report.getParagraph(id)));
                 lev.add(id, Text.normalize(report.getParagraph(id)));
-                cos.add(id, Text.normalize(report.getParagraph(id)));
             }
         }
-        ext.complete();
         lev.complete();
-        cos.complete();
 
         long size = corpus.size();
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
@@ -80,20 +74,10 @@ public class CompareParagraphs extends Command {
 
                 for(String m : srcReport.getParagraphIds()) {
                     for(String n : dstReport.getParagraphIds()) {
-                        if(ext.compare(m, n) > 0) {
-                            srcReport.addParagraphSimilarity(m, new ParagraphSimilarity(dstId, n, 1.0, "exact"));
-                            dstReport.addParagraphSimilarity(n, new ParagraphSimilarity(srcId, m, 1.0, "exact"));
-                            continue;
-                        }
                         double ls = lev.compare(m, n);
                         if(ls > 0) {
                             srcReport.addParagraphSimilarity(m, new ParagraphSimilarity(dstId, n, ls, "lev"));
                             dstReport.addParagraphSimilarity(n, new ParagraphSimilarity(srcId, m, ls, "lev"));
-                        }
-                        double cs = cos.compare(m,n);
-                        if(cs > 0) {
-                            srcReport.addParagraphSimilarity(m, new ParagraphSimilarity(dstId, n, cs, "cos"));
-                            dstReport.addParagraphSimilarity(n, new ParagraphSimilarity(srcId, m, cs, "cos"));
                         }
                     }
                 }

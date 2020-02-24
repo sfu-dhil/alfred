@@ -48,20 +48,14 @@ public class CompareDocuments extends Command {
 
         Tokenizer words = new WordTokenizer();
 
-        Comparator ext = new ExactComparator();
         Comparator lev = new LevenshteinComparator();
-        Comparator cos = new CosineComparator(words);
 
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
 
         for(Report report : corpus) {
-            ext.add(report.getId(), Text.normalize(report.getContent()));
             lev.add(report.getId(), Text.normalize(report.getContent()));
-            cos.add(report.getId(), Text.normalize(report.getContent()));
         }
-        ext.complete();
         lev.complete();
-        cos.complete();
 
         for(int i = 0; i < size; i++) {
             String srcId = ids[i];
@@ -75,20 +69,10 @@ public class CompareDocuments extends Command {
                     continue;
                 }
 
-                if(ext.compare(srcId, dstId) > 0) {
-                    srcReport.addDocumentSimilarity(new DocumentSimilarity(dstId, 1.0, "exact"));
-                    dstReport.addDocumentSimilarity(new DocumentSimilarity(srcId, 1.0, "exact"));
-                    continue;
-                }
                 double ls = lev.compare(srcId, dstId);
                 if(ls > 0) {
                     srcReport.addDocumentSimilarity(new DocumentSimilarity(dstId, ls, "lev"));
                     dstReport.addDocumentSimilarity(new DocumentSimilarity(srcId, ls, "lev"));
-                }
-                double cs = cos.compare(srcId, dstId);
-                if(cs > 0) {
-                    srcReport.addDocumentSimilarity(new DocumentSimilarity(dstId, cs, "cos"));
-                    dstReport.addDocumentSimilarity(new DocumentSimilarity(srcId, cs, "cos"));
                 }
             }
         }
