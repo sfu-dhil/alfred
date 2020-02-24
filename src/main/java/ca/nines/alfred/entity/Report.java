@@ -42,7 +42,7 @@ public class Report {
     File file;
 
     /**
-     * A JSoup document with the reports content.
+     * A JSoup document with the report's content.
      */
     Document document;
 
@@ -243,8 +243,16 @@ public class Report {
      *
      * @return normalized original content
      */
+    public String getContent(boolean normalized) {
+        if(normalized) {
+            return content;
+        } else {
+            return document.select("div#original").text();
+        }
+    }
+
     public String getContent() {
-        return content;
+        return getContent(true);
     }
 
     /**
@@ -464,5 +472,9 @@ public class Report {
             similarities.addAll(lp);
         }
         return similarities;
+    }
+
+    public String getText() {
+        return document.text();
     }
 }
