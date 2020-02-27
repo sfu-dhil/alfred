@@ -70,7 +70,7 @@ public class Main {
             commandName = args[0];
         }
 
-        Command cmd = commandList.get(commandName).newInstance();
+        Command cmd = commandList.get(commandName).getDeclaredConstructor().newInstance();
         cmd.setOutput(this.out);
         cmd.setError(this.err);
 

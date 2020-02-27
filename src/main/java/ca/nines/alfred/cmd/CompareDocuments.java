@@ -19,13 +19,13 @@ package ca.nines.alfred.cmd;
 
 import ca.nines.alfred.comparator.Comparator;
 import ca.nines.alfred.comparator.CosineComparator;
-import ca.nines.alfred.comparator.ExactComparator;
 import ca.nines.alfred.comparator.LevenshteinComparator;
 import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.DocumentSimilarity;
 import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.io.CorpusReader;
 import ca.nines.alfred.io.CorpusWriter;
+import ca.nines.alfred.tokenizer.CharNGramTokenizer;
 import ca.nines.alfred.tokenizer.Tokenizer;
 import ca.nines.alfred.tokenizer.WordTokenizer;
 import ca.nines.alfred.util.Text;
@@ -45,8 +45,6 @@ public class CompareDocuments extends Command {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         String[] ids = corpus.getIds();
         long size = corpus.size();
-
-        Tokenizer words = new WordTokenizer();
 
         Comparator lev = new LevenshteinComparator();
 

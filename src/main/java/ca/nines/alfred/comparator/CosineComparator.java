@@ -20,13 +20,10 @@ public class CosineComparator implements Comparator {
 
     final int minLength;
 
-    final double threshold;
-
     public CosineComparator(Tokenizer tokenizer) {
         this.tokenizer = tokenizer;
         termCount = new HashMap<>();
         minLength = Settings.getInstance().getInt("min_length");
-        threshold = Settings.getInstance().getDouble("cos_threshold");
         logger = LoggerFactory.getLogger(getClass());
     }
 
@@ -56,7 +53,7 @@ public class CosineComparator implements Comparator {
     }
 
     public void complete() {
-        logger.info("COS contains {} documents. Match threshold is {}.", termCount.size(), threshold);
+        logger.info("COS contains {} documents.", termCount.size());
     }
 
     public double compare(String srcId, String dstId) {
@@ -86,9 +83,6 @@ public class CosineComparator implements Comparator {
         }
 
         double similarity = numerator / (Math.sqrt(srcDenominator) * Math.sqrt(dstDenominator));
-        if(similarity < threshold) {
-            return 0;
-        }
         return similarity;
     }
 
