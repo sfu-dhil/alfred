@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Write all the reports in a corpus to disk.
@@ -31,6 +33,8 @@ import java.io.IOException;
 public class CorpusWriter {
 
     protected static final Logger logger = LoggerFactory.getLogger(CorpusWriter.class);
+
+    private final static String now = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
     /**
      * Write the contents of the corpus to disk.
@@ -51,6 +55,7 @@ public class CorpusWriter {
      * @throws IOException
      */
     public static void write(Report report) throws IOException {
+        report.setMetadata("dc.date", now);
         if(report.getFile() == null) {
             logger.error("Cannot write report {} to disk: unknown file.", report.getId());
             return;

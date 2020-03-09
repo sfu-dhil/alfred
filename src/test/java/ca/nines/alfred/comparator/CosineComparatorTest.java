@@ -74,6 +74,6 @@ public class CosineComparatorTest {
     public void compareDifferentTexts() {
         comparator.add("a", "I am the very model of a modern major general");
         comparator.add("b", "Let me know what you think and thanks for all the fish");
-        assertEquals(0.0, comparator.compare("a", "b"), 0.001);
+        assertEquals(0.0912, comparator.compare("a", "b"), 0.001);
     }
 }
