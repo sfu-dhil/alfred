@@ -30,7 +30,6 @@
         </resources>
 
         <plugins>
-
             <!-- copy the dependencies to the target/lib directory. -->
             <!-- see https://stackoverflow.com/a/4323501/9316 -->
             <plugin>

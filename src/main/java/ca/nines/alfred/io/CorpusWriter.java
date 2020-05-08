@@ -34,7 +34,7 @@ public class CorpusWriter {
 
     protected static final Logger logger = LoggerFactory.getLogger(CorpusWriter.class);
 
-    private final static String now = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+    private final static String now = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
     /**
      * Write the contents of the corpus to disk.
@@ -55,7 +55,7 @@ public class CorpusWriter {
      * @throws IOException
      */
     public static void write(Report report) throws IOException {
-        report.setMetadata("dc.date", now);
+        report.setMetadata("dc.date.updated", now);
         if(report.getFile() == null) {
             logger.error("Cannot write report {} to disk: unknown file.", report.getId());
             return;
