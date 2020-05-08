@@ -59,6 +59,7 @@ public class ReportTest {
 
     @Test
     public void getContent() {
+        assertEquals("mais je lavais presque prevue cette fin", report.getContent().substring(0,39));
     }
 
     @Test
