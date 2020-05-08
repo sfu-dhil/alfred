@@ -47,18 +47,15 @@ public class CompareParagraphs extends Command {
         Tokenizer words = new WordTokenizer();
 
         Comparator lev = new LevenshteinComparator();
-        Comparator cos = new CosineComparator(words);
 
         for(Report report : corpus) {
             for(String id : report.getParagraphIds(false)) {
                 lev.add(id, Text.normalize(report.getParagraph(id)));
-                cos.add(id, Text.normalize(report.getParagraph(id)));
             }
         }
         lev.complete();
-        cos.complete();
 
-        long size = corpus.size();
+        long size = lev.size();
         out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
         String[] ids = corpus.getIds();
 
