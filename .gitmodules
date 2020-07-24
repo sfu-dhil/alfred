@@ -1,0 +1,4 @@
+[submodule "reports"]
+	path = reports
+	url = git@github.com:ubermichael/wilde-reports.git
+	branch = main
