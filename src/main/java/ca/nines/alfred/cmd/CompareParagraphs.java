@@ -55,15 +55,16 @@ public class CompareParagraphs extends Command {
         }
         lev.complete();
 
-        long size = lev.size();
-        out.println("Expect " + formatter.format(size * (size - 1) / 2) + " comparisons.");
+        long size = corpus.size();
+        long comparisons = lev.size() * (lev.size() - 1) / 2;
+        tickSize = 10000;
+        out.println("Expect " + formatter.format(comparisons) + " comparisons.");
         String[] ids = corpus.getIds();
 
         for(int i = 0; i < size; i++) {
             String srcId = ids[i];
             Report srcReport = corpus.get(srcId);
             for (int j = 0; j < i; j++) {
-                tick();
 
                 String dstId = ids[j];
                 Report dstReport = corpus.get(dstId);
@@ -74,6 +75,7 @@ public class CompareParagraphs extends Command {
 
                 for(String m : srcReport.getParagraphIds()) {
                     for(String n : dstReport.getParagraphIds()) {
+                        tick();
                         double ls = lev.compare(m, n);
                         if(ls > 0) {
                             srcReport.addParagraphSimilarity(m, new ParagraphSimilarity(dstId, n, ls, "lev"));
