@@ -2,7 +2,6 @@
 alfred.iml
 target/
 alfred.jar
-reports/
 service-auth.json
 src/main/resources/stopwords/index
 *.json
