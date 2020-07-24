@@ -17,6 +17,9 @@
 
 package ca.nines.alfred.entity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,13 +34,16 @@ public class Corpus implements Iterable<Report> {
 
     private int n = 0;
 
+    private final Logger logger;
+
     public Corpus() {
         reports = new HashMap<>();
+        logger = LoggerFactory.getLogger(getClass());
     }
 
     public void add(Report report) {
         if(reports.containsKey(report.getId())) {
-            System.err.println("Duplicate report key '" + report.getId() + "'");
+            logger.info("Duplicate report key '" + report.getId() + "'");
             n++;
             report.setId("_" + n);
         }

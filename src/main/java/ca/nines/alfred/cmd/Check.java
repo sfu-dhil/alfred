@@ -24,10 +24,14 @@ import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 /**
  * Clean removes added metadata from the reports XML.
  */
-@CommandInfo(name="check", description="Check the metadata in the files in a directory.")
+@CommandInfo(name = "check", description = "Check the metadata in the files in a directory.")
 public class Check extends Command {
 
     static String[] required = {
@@ -48,16 +52,36 @@ public class Check extends Command {
     @Override
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
-        for(Report report : corpus) {
-            StringBuilder sb = new StringBuilder();
-            if( ! report.hasMetadata("dc.language")) {
-                sb.append(" - dc.language\n");
+
+        StringBuilder sb = new StringBuilder();
+        for (Report report : corpus) {
+            for (String key : required) {
+                if (!report.hasMetadata(key)) {
+                    sb.append(report.getFile().getName()).append(" is missing ").append(key).append("\n");
+                }
             }
-            if(sb.length() > 0) {
-                System.out.println(report.getFile().getPath() + " is missing some metadata:\n" + sb.toString());
+            if (report.hasMetadata("dc.date") && !report.getMetadata("dc.date").matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+                sb.append(report.getFile().getName()).append(" has invalid dc.date ").append(report.getMetadata("dc.date")).append("\n");
+            }
+            if (report.hasMetadata("dc.language") && !report.getMetadata("dc.language").matches("^[a-z][a-z]$")) {
+                sb.append(report.getFile().getName()).append(" has invalid dc.language ").append(report.getMetadata("dc.language")).append("\n");
+            }
+            if (report.hasMetadata("dc.source.facsimile")) {
+                try {
+                    new URL(report.getMetadata("dc.source.facsimile")).toURI();
+                } catch (MalformedURLException | URISyntaxException e) {
+                    sb.append(report.getFile().getName()).append(" has invalid dc.source.facsimile ").append(report.getMetadata("dc.source.facsimile")).append("\n");
+                }
+            }
+            if (report.hasMetadata("dc.source.url") && !report.getMetadata("dc.source.url").isBlank()) {
+                try {
+                    new URL(report.getMetadata("dc.source.url")).toURI();
+                } catch (MalformedURLException | URISyntaxException e) {
+                    sb.append(report.getFile().getName()).append(" has invalid dc.source.url ").append(report.getMetadata("dc.source.url")).append("\n");
+                }
             }
         }
-        CorpusWriter.write(corpus);
+        System.out.println(sb);
     }
 
 }
