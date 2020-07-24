@@ -36,8 +36,7 @@ public class Export extends Command {
     /**
      * Add options to the command line parser.
      *
-     *  -t | --translations will remove the translations from the reports.
-     *       --ids will remove IDs and generate them fresh.
+     *  -d | --directory Directory to write the text files in.
      *
      * @return configured options.
      */
@@ -49,8 +48,7 @@ public class Export extends Command {
     }
 
     /**
-     * Read all the XML documents in one or more directories and clean them. Writes the cleaned XML back to the
-     * file.
+     * Read all the XML documents in one or more directories and export them.
      *
      * @param cmd Parsed command line.
      * @throws Exception for IO errors.

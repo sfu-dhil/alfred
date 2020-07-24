@@ -25,6 +25,9 @@ import ca.nines.alfred.tokenizer.Tokenizer;
 import ca.nines.alfred.tokenizer.WordTokenizer;
 import org.apache.commons.cli.CommandLine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Count the words in each document and set the relevant metadata for each file.
  */
@@ -39,13 +42,37 @@ public class WordCount extends Command {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         Tokenizer tokenizer = new WordTokenizer();
 
+        Map<String, Integer> counts = new HashMap<>();
+        Map<String, Long> totals = new HashMap<>();
+
         for(Report report : corpus) {
             long count = tokenizer.tokenize(report.getContent()).size();
+            String lang = report.getMetadata("dc.language");
+            if( ! counts.containsKey(lang)) {
+                counts.put(lang, 0);
+            }
+            counts.put(lang, counts.get(lang)+1);
+            if( ! totals.containsKey(lang)) {
+                totals.put(lang, 0L);
+            }
+            totals.put(lang, totals.get(lang) + count);
             report.setMetadata("wr.word-count", "" + count);
             tick();
         }
         reset();
         CorpusWriter.write(corpus);
+
+        for(String s : counts.keySet()) {
+            System.out.println(" " + s + " " + counts.get(s) + " reports");
+        }
+        System.out.println("Found " + corpus.size() + " reports");
+
+        long t = 0;
+        for(String s : totals.keySet()) {
+            System.out.println(" " + s + " " + totals.get(s) + " words");
+            t += totals.get(s);
+        }
+        System.out.println("Total words: " + t);
     }
 
 }
