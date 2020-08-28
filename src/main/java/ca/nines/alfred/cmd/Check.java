@@ -27,6 +27,9 @@ import org.apache.commons.cli.Options;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Clean removes added metadata from the reports XML.
@@ -57,27 +60,48 @@ public class Check extends Command {
         for (Report report : corpus) {
             for (String key : required) {
                 if (!report.hasMetadata(key)) {
-                    sb.append(report.getFile().getName()).append(" is missing ").append(key).append("\n");
+                    sb.append(report.getFile().getName()).append(" is missing required metadata").append("\n");
+                    sb.append("  -- " + key + " is missing.\n\n");
                 }
             }
             if (report.hasMetadata("dc.date") && !report.getMetadata("dc.date").matches("^\\d{4}-\\d{2}-\\d{2}$")) {
-                sb.append(report.getFile().getName()).append(" has invalid dc.date ").append(report.getMetadata("dc.date")).append("\n");
+                sb.append(report.getFile().getName()).append(" has invalid dc.date \n");
+                sb.append("  -- " + report.getMetadata("dc.date") + " is not parsable.").append("\n\n");
             }
             if (report.hasMetadata("dc.language") && !report.getMetadata("dc.language").matches("^[a-z][a-z]$")) {
-                sb.append(report.getFile().getName()).append(" has invalid dc.language ").append(report.getMetadata("dc.language")).append("\n");
+                sb.append(report.getFile().getName()).append(" has invalid dc.language ");
+                sb.append("  -- " + report.getMetadata("dc.language") + " is not two letters.").append("\n\n");
+            }
+            if(report.hasMetadata("dc.publisher") && ! report.getTitle().startsWith(report.getMetadata("dc.publisher"))){
+                sb.append(report.getFile().getName()).append(" title does not match publisher metadata.\n");
+                sb.append("  -- title '" + report.getTitle() + "' does not start with '" + report.getMetadata("dc.publisher") + "'\n\n");
+            }
+            if(report.hasMetadata("dc.date")) {
+                try {
+                    LocalDate localDate = LocalDate.parse(report.getMetadata("dc.date"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, LLLL d, u"));
+                    if( ! report.getTitle().endsWith(date)) {
+                        sb.append(report.getFile().getName()).append(" title does not match date metadata.\n");
+                        sb.append("  -- title '" + report.getTitle() + "' does not end in date '" + date + "'\n\n");
+                    }
+                } catch(DateTimeParseException e) {
+                    // handled above.
+                }
             }
             if (report.hasMetadata("dc.source.facsimile")) {
                 try {
                     new URL(report.getMetadata("dc.source.facsimile")).toURI();
                 } catch (MalformedURLException | URISyntaxException e) {
-                    sb.append(report.getFile().getName()).append(" has invalid dc.source.facsimile ").append(report.getMetadata("dc.source.facsimile")).append("\n");
+                    sb.append(report.getFile().getName()).append(" has invalid dc.source.facsimile\n");
+                    sb.append("  -- URL is invalid: " + report.getMetadata("dc.source.facsimile")).append("\n\n");
                 }
             }
             if (report.hasMetadata("dc.source.url") && !report.getMetadata("dc.source.url").isBlank()) {
                 try {
                     new URL(report.getMetadata("dc.source.url")).toURI();
                 } catch (MalformedURLException | URISyntaxException e) {
-                    sb.append(report.getFile().getName()).append(" has invalid dc.source.url ").append(report.getMetadata("dc.source.url")).append("\n");
+                    sb.append(report.getFile().getName()).append(" has invalid dc.source.url ").append("\n");
+                    sb.append("  -- URL is invalid: " + report.getMetadata("dc.source.url")).append("\n\n");
                 }
             }
         }
