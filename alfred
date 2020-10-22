@@ -1,5 +1,6 @@
 #!/bin/sh
 
-JAVA_HOME=$(/usr/libexec/java_home)
+export JAVA_HOME=$(/usr/libexec/java_home)
+export GOOGLE_APPLICATION_CREDENTIALS=service-auth.json
 
-GOOGLE_APPLICATION_CREDENTIALS=service-auth.json $JAVA_HOME/bin/java -jar alfred.jar "$@"
+$JAVA_HOME/bin/java -jar alfred.jar "$@"

@@ -5,3 +5,4 @@ alfred.jar
 service-auth.json
 src/main/resources/stopwords/index
 *.json
+text
