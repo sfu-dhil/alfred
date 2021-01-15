@@ -105,9 +105,16 @@ public class Report {
      */
     public static Report read(File file) throws IOException {
         String html = FileUtils.readFileToString(file, "UTF-8");
-        Report report = read(html);
-        report.file = file;
-        return report;
+        Report report = null;
+        try {
+            report = read(html);
+            report.file = file;
+            return report;
+        } catch (Exception exception) {
+            System.err.println("Cannot read " + file.getPath() + " due to error: " + exception.getMessage());
+            exception.printStackTrace(System.err);
+            return null;
+        }
     }
 
     /**

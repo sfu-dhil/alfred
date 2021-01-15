@@ -82,7 +82,10 @@ public class CorpusReader {
     public static Corpus read(String root, String[] extensions) throws IOException {
         Corpus corpus = new Corpus();
         for(File file : FileUtils.listFiles(new File(root), extensions, true)) {
-            corpus.add(Report.read(file));
+            Report report = Report.read(file);
+            if(report != null) {
+                corpus.add(report);
+            }
         }
         return corpus;
     }
