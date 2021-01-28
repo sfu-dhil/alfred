@@ -20,10 +20,8 @@ package ca.nines.alfred.entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 /**
  * A corpus is a collection of reports.
@@ -70,7 +68,15 @@ public class Corpus implements Iterable<Report> {
     }
 
     @Override
+    @Nonnull
     public Iterator<Report> iterator() {
-        return reports.values().iterator();
+        List<Report> list = new ArrayList<>(reports.values());
+        list.sort(new Comparator<>() {
+            @Override
+            public int compare(Report o1, Report o2) {
+                return o1.getFile().getPath().compareTo(o2.getFile().getPath());
+            }
+        });
+        return list.iterator();
     }
 }

@@ -99,6 +99,10 @@ public class Check extends Command {
                     // handled above.
                 }
             }
+            if( ! report.getTitle().contains(" - ")) {
+                sb.append(report.getFile().getName()).append(" title is not separated from date properly.\n");
+                sb.append("  -- title '" + report.getTitle() + "' does not contain ' - '.\n\n");
+            }
             if (report.hasMetadata("dc.source.facsimile")) {
                 try {
                     new URL(report.getMetadata("dc.source.facsimile")).toURI();

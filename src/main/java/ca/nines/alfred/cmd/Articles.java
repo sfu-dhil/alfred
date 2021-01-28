@@ -68,8 +68,12 @@ public class Articles extends Command {
             }
         }
 
-        // check for the string " - " before doing this nonsense and report errors.
-        title = title.substring(0, title.indexOf(" - ")).trim() + " - " + report.getMetadata("dc.date");
+        if(!title.contains(" - ")) {
+            logger.warn("'" + report.getFile().getPath() + "' has malformed title and may be sorted incorrectly.");
+            logger.warn(title);
+        } else {
+            title = title.substring(0, title.indexOf(" - ")).trim() + " - " + report.getMetadata("dc.date");
+        }
         report.setMetadata("wr.sortable", title);
     }
 
@@ -86,11 +90,10 @@ public class Articles extends Command {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         for(Report report : corpus) {
             setSortableTitle(report, articles);
-            System.out.println(report.getTitle() + "\n" + report.getMetadata("wr.sortable") + "\n\n");
-//            tick();
+            tick();
         }
-//        reset();
-//        CorpusWriter.write(corpus);
+        reset();
+        CorpusWriter.write(corpus);
     }
 
 }

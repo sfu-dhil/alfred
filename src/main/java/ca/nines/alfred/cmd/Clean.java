@@ -73,6 +73,7 @@ public class Clean extends Command {
             report.setMetadata("wr.path", null);
             report.setMetadata("wr.word-count", null);
             report.setMetadata("wr.wordcount", null);
+            report.setMetadata("wr.sortable", null);
             report.setMetadata("index.paragraph", null);
             report.setMetadata("index.document", null);
 
