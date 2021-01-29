@@ -58,11 +58,18 @@ public class Articles extends Command {
 
     private void setSortableTitle(Report report, Map<String, String[]> articles) {
         String title = report.getTitle().toLowerCase();
+        String publisher = report.getMetadata("dc.publisher").toLowerCase();
         String lang = report.getLanguage();
         if(articles.containsKey(lang)) {
             for(String a : articles.get(lang)) {
                 if(title.startsWith(a)) {
                     title = title.substring(a.length());
+                    break;
+                }
+            }
+            for(String a : articles.get(lang)) {
+                if(publisher.startsWith(a)) {
+                    publisher = publisher.substring(a.length()).trim();
                     break;
                 }
             }
@@ -74,7 +81,9 @@ public class Articles extends Command {
         } else {
             title = title.substring(0, title.indexOf(" - ")).trim() + " - " + report.getMetadata("dc.date");
         }
+
         report.setMetadata("wr.sortable", title);
+        report.setMetadata("dc.publisher.sortable", publisher);
     }
 
     /**
