@@ -75,7 +75,7 @@ public class TranslateCommand extends Command {
                 logger.error("{}: Not translated - Missing @id", report.getFile().getName());
                 continue;
             }
-            logger.info("{}: {}", report.getMetadata("dc.language"), report.getFile().getName());
+            logger.info("{}: translating from {}", report.getFile().getName(), report.getMetadata("dc.language"));
             Translation translation = translator.translate(
                     report.getContentHtml(),
                     TranslateOption.sourceLanguage(report.getMetadata("dc.language")),
