@@ -119,6 +119,11 @@ public class Check extends Command {
                     sb.append("  -- URL is invalid: " + report.getMetadata("dc.source.url")).append("\n\n");
                 }
             }
+            String region = report.getFile().getParentFile().getParentFile().getName();
+            if( ! region.equals(report.getMetadata("dc.region"))) {
+                sb.append(report.getFile().getName()).append(" may have incorrect dc.region ").append("\n");
+                sb.append("  -- Parent folder is " + region + " but dc.region is " + report.getMetadata("dc.region")).append("\n\n");
+            }
 
         }
         System.out.println(sb);
