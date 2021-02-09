@@ -24,9 +24,13 @@ import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -58,6 +62,13 @@ public class Check extends Command {
 
         StringBuilder sb = new StringBuilder();
         for (Report report : corpus) {
+            if(report.hasErrors()) {
+                sb.append(report.getFile().getName()).append(" has parser errors.\n");
+                for(String s : report.getErrors()) {
+                    sb.append(s);
+                }
+            }
+
             for (String key : required) {
                 if (!report.hasMetadata(key)) {
                     sb.append(report.getFile().getName()).append(" is missing required metadata").append("\n");
@@ -88,6 +99,10 @@ public class Check extends Command {
                     // handled above.
                 }
             }
+            if( ! report.getTitle().contains(" - ")) {
+                sb.append(report.getFile().getName()).append(" title is not separated from date properly.\n");
+                sb.append("  -- title '" + report.getTitle() + "' does not contain ' - '.\n\n");
+            }
             if (report.hasMetadata("dc.source.facsimile")) {
                 try {
                     new URL(report.getMetadata("dc.source.facsimile")).toURI();
@@ -104,6 +119,12 @@ public class Check extends Command {
                     sb.append("  -- URL is invalid: " + report.getMetadata("dc.source.url")).append("\n\n");
                 }
             }
+            String region = report.getFile().getParentFile().getParentFile().getName();
+            if( ! region.equals(report.getMetadata("dc.region"))) {
+                sb.append(report.getFile().getName()).append(" may have incorrect dc.region ").append("\n");
+                sb.append("  -- Parent folder is " + region + " but dc.region is " + report.getMetadata("dc.region")).append("\n\n");
+            }
+
         }
         System.out.println(sb);
     }

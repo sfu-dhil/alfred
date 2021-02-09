@@ -1,5 +1,29 @@
-#!/bin/sh
+#!/bin/bash
 
-JAVA_HOME=$(/usr/libexec/java_home)
+JAVA_HOME="$(/usr/libexec/java_home)"
+JAVA="$JAVA_HOME/bin/java"
 
-GOOGLE_APPLICATION_CREDENTIALS=service-auth.json $JAVA_HOME/bin/java -jar alfred.jar "$@"
+export JAVA_HOME
+export GOOGLE_APPLICATION_CREDENTIALS=service-auth.json
+
+if [ "$1" == "all" ]; then
+  echo "cleaning reports"
+  $JAVA -jar alfred.jar clean --ids --translations reports
+  echo "stripping title articles"
+  $JAVA -jar alfred.jar articles reports
+  echo "counting words"
+  $JAVA -jar alfred.jar wc reports
+  echo "translating"
+  $JAVA -jar alfred.jar translate reports
+  echo "paragraph matching"
+  $JAVA -jar alfred.jar pc reports
+  echo "document matching"
+  $JAVA -jar alfred.jar dc reports
+  echo "assigning publisher ids to reports"
+  $JAVA -jar alfred.jar pid reports
+  echo "exporting"
+  rm -rf "$HOME/Sites-eXist/wilde-data/data/reports"
+  $JAVA -jar alfred.jar export reports --directory "$HOME/Sites-eXist/wilde-data/data/reports"
+else
+  $JAVA -jar alfred.jar "$@"
+fi

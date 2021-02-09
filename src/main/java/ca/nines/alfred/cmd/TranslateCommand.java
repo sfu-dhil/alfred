@@ -64,13 +64,18 @@ public class TranslateCommand extends Command {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         for (Report report : corpus) {
             if (report.getMetadata("dc.language").equals("en")) {
+                logger.info("{}: Not translated - English", report.getFile().getName());
                 continue;
             }
             if (!cmd.hasOption("force") && report.hasMetadata("wr.translated") && report.getMetadata("wr.translated").equals("yes")) {
+                logger.info("{}: Not translated - Already translated from {}", report.getFile().getName(), report.getMetadata("dc.language"));
                 continue;
             }
-
-            logger.info("{}: {}", report.getMetadata("dc.language"), report.getFile().getName());
+            if( ! report.hasId()) {
+                logger.error("{}: Not translated - Missing @id", report.getFile().getName());
+                continue;
+            }
+            logger.info("{}: translating from {}", report.getFile().getName(), report.getMetadata("dc.language"));
             Translation translation = translator.translate(
                     report.getContentHtml(),
                     TranslateOption.sourceLanguage(report.getMetadata("dc.language")),
@@ -79,7 +84,7 @@ public class TranslateCommand extends Command {
 
             report.setTranslation(translation.getTranslatedText());
             CorpusWriter.write(report);
-            Thread.sleep(waitTime); // sleep for one second.
+            Thread.sleep(waitTime); // sleep for seconds.
         }
     }
 }

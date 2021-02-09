@@ -23,6 +23,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities;
+import org.jsoup.parser.ParseError;
+import org.jsoup.parser.ParseErrorList;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
@@ -45,6 +47,11 @@ public class Report {
      * A JSoup document with the report's content.
      */
     Document document;
+
+    /**
+     * Errors during parsing.
+     */
+    ParseErrorList errors;
 
     /**
      * Report ID from the html root element.
@@ -105,9 +112,16 @@ public class Report {
      */
     public static Report read(File file) throws IOException {
         String html = FileUtils.readFileToString(file, "UTF-8");
-        Report report = read(html);
-        report.file = file;
-        return report;
+        Report report = null;
+        try {
+            report = read(html);
+            report.file = file;
+            return report;
+        } catch (Exception exception) {
+            System.err.println("Cannot read " + file.getPath() + " due to error: " + exception.getMessage());
+            exception.printStackTrace(System.err);
+            return null;
+        }
     }
 
     /**
@@ -117,10 +131,15 @@ public class Report {
      * @return the parsed report
      */
     public static Report read(String html) {
-        Document document = Jsoup.parse(html, "", Parser.xmlParser());
+        Parser parser = Parser.xmlParser();
+        parser.setTrackErrors(100);
+
+        Document document = Jsoup.parse(html, "", parser);
+        ParseErrorList errors = parser.getErrors();
 
         Report report = new Report();
         report.document = document;
+        report.errors = errors;
         report.id = document.selectFirst("html").attr("id");
         report.title = document.title();
 
@@ -192,6 +211,18 @@ public class Report {
      */
     public boolean hasId() {
         return this.id != null;
+    }
+
+    public boolean hasErrors() {
+        return this.errors.size() > 0;
+    }
+
+    public List<String> getErrors() {
+        List<String> e = new ArrayList<>();
+        for(ParseError err : errors) {
+            e.add(err.getErrorMessage());
+        }
+        return e;
     }
 
     /**
@@ -417,6 +448,9 @@ public class Report {
             Element meta = new Element("meta");
             meta.attr("content", entry.getValue());
             meta.attr("name", entry.getKey());
+            if(entry.getKey().equals("dc.publisher")) {
+                meta.attr("data-sortable", this.getMetadata("dc.publisher.sortable"));
+            }
             meta.appendTo(document.head());
         }
 
