@@ -448,6 +448,9 @@ public class Report {
             Element meta = new Element("meta");
             meta.attr("content", entry.getValue());
             meta.attr("name", entry.getKey());
+            if(entry.getKey().equals("dc.publisher")) {
+                meta.attr("data-sortable", this.getMetadata("dc.publisher.sortable"));
+            }
             meta.appendTo(document.head());
         }
 
