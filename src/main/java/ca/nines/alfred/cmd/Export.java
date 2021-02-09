@@ -28,9 +28,9 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 
 /**
- * Clean removes added metadata from the reports XML.
+ * Exports the files in a directory
  */
-@CommandInfo(name = "export", description = "Clean the files in a directory.")
+@CommandInfo(name = "export", description = "Export files to a directory.")
 public class Export extends Command {
 
     /**
@@ -43,7 +43,8 @@ public class Export extends Command {
     @Override
     public Options getOptions() {
         Options opts = super.getOptions();
-        opts.addRequiredOption("d", "directory", true, "Directory for export");
+        opts.addRequiredOption(null, "directory", true, "Directory for export");
+        opts.addOption(null, "text", true, "Export as text0");
         return opts;
     }
 
@@ -57,14 +58,22 @@ public class Export extends Command {
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
         String directory = cmd.getOptionValue("directory");
+        boolean text = cmd.hasOption("text");
         for (Report report : corpus) {
-            String filename = report.getFile().getName().replace(".xml", ".txt");
+            String filename = report.getFile().getName();
+            if(text) {
+                filename = filename.replace(".xml", ".txt");
+            }
             File file = new File(directory + "/" + report.getMetadata("dc.region") + "/" + report.getMetadata("dc.publisher") + "/" + filename);
-            String text = report.getContent(false);
-            FileUtils.writeStringToFile(file, text, "UTF-8");
+            String content;
+            if(text) {
+                content = report.getContent(false);
+            } else {
+                content = report.serialize();
+            }
+            FileUtils.writeStringToFile(file, content, "UTF-8");
             tick();
         }
         reset();
     }
-
 }
