@@ -88,6 +88,8 @@ public class Report {
      */
     Map<String, String> paragraphs;
 
+    String signature;
+
     /**
      * List of IDs mapped to paragraph similarities
      */
@@ -145,6 +147,11 @@ public class Report {
 
         for(Element meta : document.select("meta")) {
             report.metadata.put(meta.attr("name"), meta.attr("content"));
+        }
+
+        Element sig = document.selectFirst("p.signature");
+        if(sig != null) {
+            report.signature = sig.text();
         }
 
         for(Element link : document.select("link")) {
@@ -267,6 +274,10 @@ public class Report {
      */
     public String getParagraph(String id) {
         return paragraphs.get(id);
+    }
+
+    public String getSignature() {
+        return signature;
     }
 
     /**
@@ -505,6 +516,15 @@ public class Report {
         for(List<ParagraphSimilarity> lp : paragraphSimilarities.values()) {
             similarities.addAll(lp);
         }
+        return similarities;
+    }
+
+    public List<ParagraphSimilarity> getParagraphSimilarities(String id) {
+        List<ParagraphSimilarity> similarities = new ArrayList<>();
+        if(paragraphSimilarities.get(id) == null) {
+            return similarities;
+        }
+        similarities.addAll(paragraphSimilarities.get(id));
         return similarities;
     }
 

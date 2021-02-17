@@ -44,7 +44,7 @@ public class Export extends Command {
     public Options getOptions() {
         Options opts = super.getOptions();
         opts.addRequiredOption(null, "directory", true, "Directory for export");
-        opts.addOption(null, "text", true, "Export as text0");
+        opts.addOption(null, "text", false, "Export as text");
         return opts;
     }
 

@@ -34,5 +34,4 @@ public class Text {
                 .replaceAll("[^a-z0-9 -]", "")
                 .trim();
     }
-
 }
