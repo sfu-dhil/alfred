@@ -123,6 +123,10 @@ public class Check extends Command {
                     sb.append("  -- file: " + report.getFile().getPath() + "\n");
                 }
             }
+            if(report.hasMetadata("dc.source.database") && report.getMetadata("dc.source.database").startsWith("http")) {
+                sb.append(report.getFile().getName()).append(" has dc.source.database with a URL").append("\n");
+                sb.append("  -- file: " + report.getFile().getPath() + "\n");
+            }
             String region = report.getFile().getParentFile().getParentFile().getName();
             if( ! region.equals(report.getMetadata("dc.region"))) {
                 sb.append(report.getFile().getName()).append(" may have incorrect dc.region ").append("\n");
