@@ -118,6 +118,10 @@ public class Check extends Command {
                     sb.append(report.getFile().getName()).append(" has invalid dc.source.url ").append("\n");
                     sb.append("  -- URL is invalid: " + report.getMetadata("dc.source.url")).append("\n\n");
                 }
+                if( ! report.hasMetadata("dc.source.database")) {
+                    sb.append(report.getFile().getName()).append(" has dc.source.url without dc.source.database").append("\n");
+                    sb.append("  -- file: " + report.getFile().getPath() + "\n");
+                }
             }
             String region = report.getFile().getParentFile().getParentFile().getName();
             if( ! region.equals(report.getMetadata("dc.region"))) {
