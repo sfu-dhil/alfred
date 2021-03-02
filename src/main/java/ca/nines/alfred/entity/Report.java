@@ -289,7 +289,7 @@ public class Report {
         if(normalized) {
             return content;
         } else {
-            return document.select("div#original").text();
+            return document.select("div#original").select("p:not(.heading)").text();
         }
     }
 
