@@ -6,27 +6,39 @@ JAVA="$JAVA_HOME/bin/java"
 export JAVA_HOME
 export GOOGLE_APPLICATION_CREDENTIALS=service-auth.json
 
-#if [ "$1" == "all" ]; then
+if [ "$1" == "--all" ]; then
   # echo "cleaning reports"
   # $JAVA -jar alfred.jar clean --ids --translations reports
+  #
   # echo "stripping title articles"
   # $JAVA -jar alfred.jar articles reports
+  #
   # echo "counting words"
   # $JAVA -jar alfred.jar wc reports
- # echo "translating"
- # $JAVA -jar alfred.jar translate reports
-
-#  echo "paragraph matching"
-#  $JAVA -jar alfred.jar pc reports
-#  echo "document matching"
-#  $JAVA -jar alfred.jar dc reports
+  #
+  # echo "translating"
+  # $JAVA -jar alfred.jar translate reports
+  #
+  # echo "paragraph matching"
+  # $JAVA -jar alfred.jar pc reports
+  #
+  # echo "document matching"
+  # $JAVA -jar alfred.jar dc reports
+  #
   # echo "assigning publisher ids to reports"
   # $JAVA -jar alfred.jar pid reports
+  #
   # echo "exporting"
   # rm -rf "$HOME/Sites-eXist/wilde-data/data/reports"
+  #
   # $JAVA -jar alfred.jar export reports --directory "$HOME/Sites-eXist/wilde-data/data/reports"
+  #
   # echo "data tables"
   # $JAVA -jar alfred.jar data --directory ~/Sites-eXist/wilde-data/data/tables/ reports
-#else
+
+  echo "publisher index"
+  $JAVA -jar alfred.jar pidx --file="$HOME/Sites-eXist/wilde-data/data/publisherIndex.xml" reports
+
+else
   $JAVA -jar alfred.jar "$@"
-#fi
+fi
