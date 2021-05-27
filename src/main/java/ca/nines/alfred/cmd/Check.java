@@ -24,8 +24,10 @@ import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -49,6 +51,14 @@ public class Check extends Command {
             "dc.region.city",
     };
 
+    protected void log(Report report, String s, String... detail) {
+        System.out.println(s);
+        for(String d : detail) {
+            System.out.println("  " + d);
+        }
+        System.out.println("  -- file: " + report.getFile().getPath() + "\n");
+    }
+
     /**
      * Read all the XML documents in one or more directories and clean them. Writes the cleaned XML back to the
      * file.
@@ -60,81 +70,86 @@ public class Check extends Command {
     public void execute(CommandLine cmd) throws Exception {
         Corpus corpus = CorpusReader.read(getArgList(cmd));
 
-        StringBuilder sb = new StringBuilder();
         for (Report report : corpus) {
-            if(report.hasErrors()) {
-                sb.append(report.getFile().getName()).append(" has parser errors.\n");
-                for(String s : report.getErrors()) {
-                    sb.append(s);
+            String p = report.getFile().getPath();
+            for(String s : p.split(File.separator)) {
+                if(s.startsWith(" ") || s.endsWith(" ")) {
+                    log(report, "Folder or file name that starts or ends with a space");
                 }
+            }
+
+            if(report.hasErrors()) {
+                log(report, "XML parser errors", report.getErrors().toArray(new String[0]));
             }
 
             for (String key : required) {
                 if (!report.hasMetadata(key)) {
-                    sb.append(report.getFile().getName()).append(" is missing required metadata").append("\n");
-                    sb.append("  -- " + key + " is missing.\n\n");
+                    log(report, "Missing required metadata", key + " is missing.");
                 }
             }
+
             if (report.hasMetadata("dc.date") && !report.getMetadata("dc.date").matches("^\\d{4}-\\d{2}-\\d{2}$")) {
-                sb.append(report.getFile().getName()).append(" has invalid dc.date \n");
-                sb.append("  -- " + report.getMetadata("dc.date") + " is not parsable.").append("\n\n");
+                log(report, "Invalid dc.date", report.getMetadata("dc.date") + " is not parsable.");
             }
+
             if (report.hasMetadata("dc.language") && !report.getMetadata("dc.language").matches("^[a-z][a-z]$")) {
-                sb.append(report.getFile().getName()).append(" has invalid dc.language ");
-                sb.append("  -- " + report.getMetadata("dc.language") + " is not two letters.").append("\n\n");
+                log(report, "Invalid dc.language", report.getMetadata("dc.language") + " is not two letters.");
             }
+
             if(report.hasMetadata("dc.publisher") && ! report.getTitle().startsWith(report.getMetadata("dc.publisher"))){
-                sb.append(report.getFile().getName()).append(" title does not match publisher metadata.\n");
-                sb.append("  -- title '" + report.getTitle() + "' does not start with '" + report.getMetadata("dc.publisher") + "'\n\n");
+                log(report, "Title does not match publisher metadata", "title '" + report.getTitle() + "' does not start with " + report.getMetadata("dc.publisher"));
             }
+
             if(report.hasMetadata("dc.date")) {
                 try {
                     LocalDate localDate = LocalDate.parse(report.getMetadata("dc.date"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                     String date = localDate.format(DateTimeFormatter.ofPattern("EEEE, LLLL d, u"));
+
                     if( ! report.getTitle().endsWith(date)) {
-                        sb.append(report.getFile().getName()).append(" title does not match date metadata.\n");
-                        sb.append("  -- title '" + report.getTitle() + "' does not end in date '" + date + "'\n\n");
+                        log(report, "Title does not match date metadata", "title '" + report.getTitle() + "' does not end in date '" + date);
                     }
                 } catch(DateTimeParseException e) {
-                    // handled above.
+                    log(report, "Cannot parse dc.date", report.getMetadata("dc.date") + " is not formatted YYYY-MM-DD");
                 }
             }
+
             if( ! report.getTitle().contains(" - ")) {
-                sb.append(report.getFile().getName()).append(" title is not separated from date properly.\n");
-                sb.append("  -- title '" + report.getTitle() + "' does not contain ' - '.\n\n");
+                log(report, "title does not contain a hyphen and is not separated from date properly.");
             }
+
             if (report.hasMetadata("dc.source.facsimile")) {
                 try {
                     new URL(report.getMetadata("dc.source.facsimile")).toURI();
                 } catch (MalformedURLException | URISyntaxException e) {
-                    sb.append(report.getFile().getName()).append(" has invalid dc.source.facsimile\n");
-                    sb.append("  -- URL is invalid: " + report.getMetadata("dc.source.facsimile")).append("\n\n");
+                    log(report, "Invalid dc.source.facsimile URL", report.getMetadata("dc.source.facsimile") + " cannot be parsed", e.getMessage());
                 }
             }
+
             if (report.hasMetadata("dc.source.url") && !report.getMetadata("dc.source.url").isBlank()) {
                 try {
                     new URL(report.getMetadata("dc.source.url")).toURI();
                 } catch (MalformedURLException | URISyntaxException e) {
-                    sb.append(report.getFile().getName()).append(" has invalid dc.source.url ").append("\n");
-                    sb.append("  -- URL is invalid: " + report.getMetadata("dc.source.url")).append("\n\n");
+                    log(report, "Invalid dc.source.url", report.getMetadata("dc.source.url") + " cannot be parsed", e.getMessage());
                 }
                 if( ! report.hasMetadata("dc.source.database")) {
-                    sb.append(report.getFile().getName()).append(" has dc.source.url without dc.source.database").append("\n");
-                    sb.append("  -- file: " + report.getFile().getPath() + "\n");
+                    log(report, "dc.source.url cannot occur without dc.source.database.");
                 }
             }
+
             if(report.hasMetadata("dc.source.database") && report.getMetadata("dc.source.database").startsWith("http")) {
-                sb.append(report.getFile().getName()).append(" has dc.source.database with a URL").append("\n");
-                sb.append("  -- file: " + report.getFile().getPath() + "\n");
+                log(report, "dc.source.database looks like a URL");
             }
-            String region = report.getFile().getParentFile().getParentFile().getName();
-            if( ! region.equals(report.getMetadata("dc.region"))) {
-                sb.append(report.getFile().getName()).append(" may have incorrect dc.region ").append("\n");
-                sb.append("  -- Parent folder is " + region + " but dc.region is " + report.getMetadata("dc.region")).append("\n\n");
+
+            try {
+                String region = report.getFile().getParentFile().getParentFile().getName();
+                if( ! region.equals(report.getMetadata("dc.region"))) {
+                    log(report, "Possibly incorrect dc.region", "Parent folder is " + region + " but dc.region is " + report.getMetadata("dc.region"));
+                }
+            } catch (Exception e) {
+                log(report, "Possibly misfiled.");
             }
 
         }
-        System.out.println(sb);
     }
 
 }

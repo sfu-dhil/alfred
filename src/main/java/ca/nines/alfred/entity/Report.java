@@ -20,9 +20,7 @@ package ca.nines.alfred.entity;
 import ca.nines.alfred.util.Text;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Entities;
+import org.jsoup.nodes.*;
 import org.jsoup.parser.ParseError;
 import org.jsoup.parser.ParseErrorList;
 import org.jsoup.parser.Parser;
@@ -51,7 +49,7 @@ public class Report {
     /**
      * Errors during parsing.
      */
-    ParseErrorList errors;
+    List<String> errors;
 
     /**
      * Report ID from the html root element.
@@ -103,6 +101,7 @@ public class Report {
         documentSimilarities = new ArrayList<>();
         paragraphs = new HashMap<>();
         paragraphSimilarities = new HashMap<>();
+        errors = new ArrayList<>();
     }
 
     /**
@@ -141,7 +140,9 @@ public class Report {
 
         Report report = new Report();
         report.document = document;
-        report.errors = errors;
+        for(ParseError e : errors) {
+            report.errors.add(e.toString());
+        }
         report.id = document.selectFirst("html").attr("id");
         report.title = document.title();
 
@@ -179,7 +180,11 @@ public class Report {
            report.paragraphSimilarities.put(p.id(), similarities);
         }
 
-        report.content = Text.normalize(document.getElementById("original").select("p:not(.heading)").text());
+        if(document.getElementById("original") == null) {
+            report.errors.add("Cannot find original text.");
+        } else {
+            report.content = Text.normalize(document.getElementById("original").select("p:not(.heading)").text());
+        }
         Element div = document.selectFirst("#translation");
         if(div != null) {
             report.translatedContent = Text.normalize(div.text());
@@ -225,11 +230,7 @@ public class Report {
     }
 
     public List<String> getErrors() {
-        List<String> e = new ArrayList<>();
-        for(ParseError err : errors) {
-            e.add(err.getErrorMessage());
-        }
-        return e;
+        return errors;
     }
 
     /**
@@ -503,6 +504,7 @@ public class Report {
         document.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
         document.outputSettings().prettyPrint(true);
+        document.childNodes().stream().filter(n -> n instanceof DocumentType).findFirst().ifPresent(Node::remove);
         document.normalise();
         return document.html();
     }
