@@ -20,12 +20,19 @@ package ca.nines.alfred.entity;
 import ca.nines.alfred.util.Text;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
 import org.jsoup.nodes.*;
 import org.jsoup.parser.ParseError;
 import org.jsoup.parser.ParseErrorList;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+import org.w3c.dom.NodeList;
 
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -440,6 +447,47 @@ public class Report {
      */
     public void removeParagraphSimilarities() {
         paragraphSimilarities.clear();
+    }
+
+    public List<String> checkStructure() throws XPathExpressionException {
+        List<String> errors = new ArrayList<>();
+
+        org.w3c.dom.Document dom = W3CDom.convert(document);
+
+        NamespaceContext nc = new NamespaceContext() {
+            @Override
+            public String getNamespaceURI(String prefix) {
+                return prefix.equals("html") ? "http://www.w3.org/1999/xhtml" : null;
+            }
+
+            @Override
+            public String getPrefix(String namespaceURI) {
+                return namespaceURI.equals("http://www.w3.org/1999/xhtml") ? "html" : null;
+            }
+
+            @Override
+            public Iterator<String> getPrefixes(String namespaceURI) {
+                return Arrays.stream(new String[]{"html"}).iterator();
+            }
+        };
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        xPath.setNamespaceContext(nc);
+
+        String expr = "//html:body//text()[not(ancestor::html:p) and not(ancestor::html:h1)][normalize-space(.)]";
+        NodeList nl = (NodeList)xPath.compile(expr).evaluate(dom, XPathConstants.NODESET);
+
+        for(int i = 0; i < nl.getLength(); i++) {
+            errors.add("Text found outside of paragraph or heading: \"" + nl.item(i).getTextContent().trim() + "\"");
+        }
+
+        expr = "//html:body//*[not(ancestor-or-self::html:div)]";
+        nl = (NodeList)xPath.evaluate(expr, dom, XPathConstants.NODESET);
+        if(nl.getLength() > 0) {
+            errors.add("Content found outside of a div");
+        }
+
+        return errors;
     }
 
     /**

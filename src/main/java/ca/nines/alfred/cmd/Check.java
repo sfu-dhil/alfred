@@ -20,25 +20,18 @@ package ca.nines.alfred.cmd;
 import ca.nines.alfred.entity.Corpus;
 import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.io.CorpusReader;
-import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
 
-import javax.swing.filechooser.FileSystemView;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Clean removes added metadata from the reports XML.
+ * Validate the reports XML.
  */
 @CommandInfo(name = "check", description = "Check the metadata in the files in a directory.")
 public class Check extends Command {
@@ -82,14 +75,14 @@ public class Check extends Command {
                 log(report, "XML parser errors", report.getErrors().toArray(new String[0]));
             }
 
+            for(String e : report.checkStructure()) {
+                log(report, "Structural problems", e);
+            }
+
             for (String key : required) {
                 if (!report.hasMetadata(key)) {
                     log(report, "Missing required metadata", key + " is missing.");
                 }
-            }
-
-            if (report.hasMetadata("dc.date") && !report.getMetadata("dc.date").matches("^\\d{4}-\\d{2}-\\d{2}$")) {
-                log(report, "Invalid dc.date", report.getMetadata("dc.date") + " is not parsable.");
             }
 
             if (report.hasMetadata("dc.language") && !report.getMetadata("dc.language").matches("^[a-z][a-z]$")) {
@@ -98,6 +91,10 @@ public class Check extends Command {
 
             if(report.hasMetadata("dc.publisher") && ! report.getTitle().startsWith(report.getMetadata("dc.publisher"))){
                 log(report, "Title does not match publisher metadata", "title '" + report.getTitle() + "' does not start with " + report.getMetadata("dc.publisher"));
+            }
+
+            if (report.hasMetadata("dc.date") && !report.getMetadata("dc.date").matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+                log(report, "Invalid dc.date", report.getMetadata("dc.date") + " is not parsable.");
             }
 
             if(report.hasMetadata("dc.date")) {
@@ -130,9 +127,6 @@ public class Check extends Command {
                     new URL(report.getMetadata("dc.source.url")).toURI();
                 } catch (MalformedURLException | URISyntaxException e) {
                     log(report, "Invalid dc.source.url", report.getMetadata("dc.source.url") + " cannot be parsed", e.getMessage());
-                }
-                if( ! report.hasMetadata("dc.source.database")) {
-                    log(report, "dc.source.url cannot occur without dc.source.database.");
                 }
             }
 
