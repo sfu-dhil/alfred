@@ -22,7 +22,7 @@ import ca.nines.alfred.entity.DocumentSimilarity;
 import ca.nines.alfred.entity.ParagraphSimilarity;
 import ca.nines.alfred.entity.Report;
 import ca.nines.alfred.io.CorpusReader;
-import ca.nines.alfred.util.Language;
+import ca.nines.alfred.util.LanguageDecoder;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.csv.CSVFormat;
@@ -84,7 +84,7 @@ public class Data extends Command {
                     report.getMetadata("dc.publisher"),
                     report.getMetadata("dc.region"),
                     report.getMetadata("dc.region.city"),
-                    Language.codeToLanguage(report.getMetadata("dc.language")),
+                    LanguageDecoder.codeToLanguage(report.getMetadata("dc.language")),
             };
             data.add(row);
         }
@@ -173,7 +173,7 @@ public class Data extends Command {
                     report.getMetadata("dc.publisher"),
                     report.getMetadata("dc.region"),
                     report.getMetadata("dc.region.city"),
-                    Language.codeToLanguage(report.getMetadata("dc.language")),
+                    LanguageDecoder.codeToLanguage(report.getMetadata("dc.language")),
                     sig,
             };
             data.add(row);
@@ -191,7 +191,7 @@ public class Data extends Command {
                     report.getMetadata("dc.publisher"),
                     report.getMetadata("dc.region"),
                     report.getMetadata("dc.region.city"),
-                    Language.codeToLanguage(report.getMetadata("dc.language")),
+                    LanguageDecoder.codeToLanguage(report.getMetadata("dc.language")),
             };
             data.add(row);
         }
@@ -208,7 +208,7 @@ public class Data extends Command {
             String[] row = new String[]{
                     report.getId(),
                     report.getMetadata("dc.publisher"),
-                    Language.codeToLanguage(report.getMetadata("dc.language")),
+                    LanguageDecoder.codeToLanguage(report.getMetadata("dc.language")),
                     report.getMetadata("dc.region"),
                     report.getMetadata("dc.region.city"),
             };
@@ -254,7 +254,7 @@ public class Data extends Command {
             String[] row = new String[]{
                     report.getMetadata("dc.publisher.id"),
                     report.getMetadata("dc.publisher"),
-                    Language.codeToLanguage(report.getMetadata("dc.language")),
+                    LanguageDecoder.codeToLanguage(report.getMetadata("dc.language")),
                     report.getMetadata("dc.region"),
                     report.getMetadata("dc.region.city"),
             };

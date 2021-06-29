@@ -206,6 +206,14 @@
     </build>
     <dependencies>
 
+        <!-- Language detection etc. -->
+        <dependency>
+            <groupId>org.apache.opennlp</groupId>
+            <artifactId>opennlp-distr</artifactId>
+            <version>1.9.3</version>
+            <type>pom</type>
+        </dependency>
+
         <!-- Translation API -->
         <dependency>
             <groupId>com.google.cloud</groupId>
@@ -291,6 +299,5 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
         </dependency>
-
     </dependencies>
 </project>
