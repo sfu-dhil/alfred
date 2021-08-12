@@ -274,6 +274,14 @@ public class Report {
         return ids.toArray(new String[ids.size()]);
     }
 
+    public void removeParagraphIds() {
+        for(Element e : document.select("p")) {
+            if(e.hasAttr("id")) {
+                e.removeAttr("id");
+            }
+        }
+    }
+
     /**
      * Get the normalized content of one paragraph.
      *
@@ -404,6 +412,10 @@ public class Report {
         return metadata.get("dc.language");
     }
 
+    public Elements getElements() {
+        return document.select("*");
+    }
+
     /**
      * Get the source file for the report
      *
@@ -497,7 +509,11 @@ public class Report {
      * @return HTML string
      */
     public String serialize() {
-        document.selectFirst("html").attr("id", id);
+        if(id != null) {
+            document.selectFirst("html").attr("id", id);
+        } else {
+            document.selectFirst("html").removeAttr("id");
+        }
 
         document.select("meta").remove();
         document.charset(StandardCharsets.UTF_8);
@@ -549,11 +565,13 @@ public class Report {
             }
         }
 
+        document.childNodes().stream().filter(n -> n instanceof DocumentType).findFirst().ifPresent(Node::remove);
+        document.normalise();
+        document.outputSettings().charset(StandardCharsets.UTF_8);
+        document.outputSettings().indentAmount(2);
         document.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
         document.outputSettings().prettyPrint(true);
-        document.childNodes().stream().filter(n -> n instanceof DocumentType).findFirst().ifPresent(Node::remove);
-        document.normalise();
         return document.html();
     }
 

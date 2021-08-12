@@ -24,6 +24,8 @@ import ca.nines.alfred.io.CorpusWriter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
+import java.io.File;
+
 /**
  * Clean removes added metadata from the reports XML.
  */
@@ -41,9 +43,30 @@ public class Clean extends Command {
     @Override
     public Options getOptions() {
         Options opts = super.getOptions();
+        opts.addOption(null, "file", true, "Clean one file");
         opts.addOption("t", "translations", false, "Also remove translations");
         opts.addOption(null, "ids", false, "Also reset IDs on documents and paragraphs.");
         return opts;
+    }
+
+    public void clean(Report report, boolean ids, boolean translation) {
+        if(ids) {
+            report.setId(null);
+            report.removeParagraphIds();
+        }
+        if(translation) {
+            report.setTranslation(null);
+        }
+        report.removeDocumentSimilarities();
+        report.removeParagraphSimilarities();
+        report.setMetadata("dc.publisher.id", null);
+        report.setMetadata("dc.publisher.sortable", null);
+        report.setMetadata("wr.path", null);
+        report.setMetadata("wr.word-count", null);
+        report.setMetadata("wr.wordcount", null);
+        report.setMetadata("wr.sortable", null);
+        report.setMetadata("index.paragraph", null);
+        report.setMetadata("index.document", null);
     }
 
     /**
@@ -55,32 +78,22 @@ public class Clean extends Command {
      */
     @Override
     public void execute(CommandLine cmd) throws Exception {
-        int n = 0;
-        Corpus corpus = CorpusReader.read(getArgList(cmd));
-        for(Report report : corpus) {
-            n++;
-            String id = report.getFile().getName().replaceAll("[^A-Z]", "").toLowerCase() + "_" + n;
-
-            if( ! report.hasId() || cmd.hasOption("ids")) {
-                report.setId(id);
-                report.setParagraphIds();
+        if(cmd.hasOption("file")) {
+            Report report = Report.read(new File(cmd.getOptionValue("file")));
+            if(report == null) {
+                throw new Exception("Cannot read report");
             }
-            if(cmd.hasOption("translations")) {
-                report.setTranslation(null);
+            clean(report, cmd.hasOption("ids"), cmd.hasOption("translations"));
+            CorpusWriter.write(report);
+        } else {
+            Corpus corpus = CorpusReader.read(getArgList(cmd));
+            for(Report report : corpus) {
+                clean(report, cmd.hasOption("ids"), cmd.hasOption("translations"));
+                tick();
             }
-            report.removeDocumentSimilarities();
-            report.removeParagraphSimilarities();
-            report.setMetadata("wr.path", null);
-            report.setMetadata("wr.word-count", null);
-            report.setMetadata("wr.wordcount", null);
-            report.setMetadata("wr.sortable", null);
-            report.setMetadata("index.paragraph", null);
-            report.setMetadata("index.document", null);
-
-            tick();
+            reset();
+            CorpusWriter.write(corpus);
         }
-        reset();
-        CorpusWriter.write(corpus);
     }
 
 }
