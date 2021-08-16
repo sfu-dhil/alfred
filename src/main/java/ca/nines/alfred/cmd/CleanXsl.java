@@ -75,7 +75,12 @@ public class CleanXsl extends Command {
             Source xml = new StreamSource(file);
             transformer.setSource(xml);
             transformer.setDestination(serializer);
-            transformer.transform();
+            try {
+                transformer.transform();
+            } catch (SaxonApiException e) {
+                System.err.println("Cannot process " + file.getPath());
+                System.err.println(e.getMessage());
+            }
             tick();
         }
         reset();
