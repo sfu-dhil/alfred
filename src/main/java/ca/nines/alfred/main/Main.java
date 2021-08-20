@@ -70,6 +70,11 @@ public class Main {
             commandName = args[0];
         }
 
+        if( ! commandList.containsKey(commandName)) {
+            System.err.println("Unknown command " + commandName);
+            System.exit(1);
+        }
+
         Command cmd = commandList.get(commandName).getDeclaredConstructor().newInstance();
         cmd.setOutput(this.out);
         cmd.setError(this.err);
