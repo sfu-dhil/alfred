@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * Clean removes added metadata from the reports XML.
  */
-@CommandInfo(name="pidx", description="Assign IDs to publishers and use the IDs in links.")
+@CommandInfo(name="pidx", description="Generate a publisher index")
 public class PublisherIndex extends Command {
 
     public PublisherIndex() {
