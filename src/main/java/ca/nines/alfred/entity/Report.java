@@ -490,7 +490,10 @@ public class Report {
         NodeList nl = (NodeList)xPath.compile(expr).evaluate(dom, XPathConstants.NODESET);
 
         for(int i = 0; i < nl.getLength(); i++) {
-            errors.add("Text found outside of paragraph or heading: \"" + nl.item(i).getTextContent().trim() + "\"");
+            String s = nl.item(i).getTextContent().strip();
+            if( ! s.isEmpty()) {
+                errors.add("Text found outside of paragraph or heading: \"" + s + "\"");
+            }
         }
 
         expr = "//html:body//*[not(ancestor-or-self::html:div)]";
