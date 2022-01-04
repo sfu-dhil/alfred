@@ -111,7 +111,7 @@ public class Check extends Command {
             }
 
             if( ! report.getTitle().contains(" - ")) {
-                log(report, "title does not contain a hyphen and is not separated from date properly.");
+                log(report, "Title is not formatted correctly", "title '" + report.getTitle() + "' does not contain a hyphen and is not separated from date properly.");
             }
 
             if (report.hasMetadata("dc.source.facsimile")) {
