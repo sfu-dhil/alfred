@@ -6,39 +6,59 @@ JAVA="$JAVA_HOME/bin/java"
 export JAVA_HOME
 export GOOGLE_APPLICATION_CREDENTIALS=service-auth.json
 
+XSL="https://raw.githubusercontent.com/ubermichael/wilde-schema/main/schema/clean.xsl"
+DIR="reports"
+
+function commit {
+  if [ "$1" == "" ]; then
+    echo "Cannot commit without a message.";
+    die;
+  fi
+
+  pushd $DIR
+  git ci -am "$1";
+  popd;
+}
+
 if [ "$1" == "--all" ]; then
-  # echo "cleaning reports"
-  # $JAVA -jar alfred.jar clean --ids --translations reports
-  #
-  # echo "stripping title articles"
-  # $JAVA -jar alfred.jar articles reports
-  #
-  # echo "counting words"
-  # $JAVA -jar alfred.jar wc reports
-  #
-  # echo "translating"
-  # $JAVA -jar alfred.jar translate reports
-  #
-  # echo "paragraph matching"
-  # $JAVA -jar alfred.jar pc reports
-  #
-  # echo "document matching"
-  # $JAVA -jar alfred.jar dc reports
-  #
-  # echo "assigning publisher ids to reports"
-  # $JAVA -jar alfred.jar pid reports
-  #
-  # echo "exporting"
-  # rm -rf "$HOME/Sites-eXist/wilde-data/data/reports"
-  #
-  # $JAVA -jar alfred.jar export reports --directory "$HOME/Sites-eXist/wilde-data/data/reports"
-  #
-  # echo "data tables"
-  # $JAVA -jar alfred.jar data --directory ~/Sites-eXist/wilde-data/data/tables/ reports
+  echo "cleaning reports"
+#  $JAVA -jar alfred.jar cleanxsl --url=$XSL  $DIR
+  $JAVA -jar alfred.jar clean --ids --translations $DIR
+  commit "Automatically clean reports"
 
-  echo "publisher index"
-  $JAVA -jar alfred.jar pidx --file="$HOME/Sites-eXist/wilde-data/data/publisherIndex.xml" reports
+  echo "stripping title articles"
+  $JAVA -jar alfred.jar articles $DIR
+  commit "Automatically generated sortable report titles"
 
+  echo "counting words"
+  $JAVA -jar alfred.jar wc $DIR
+  commit "Automatically count words"
+
+#  echo "translating"
+#  $JAVA -jar alfred.jar translate $DIR
+#  commit "Automatically translate"
+#
+#  echo "paragraph matching"
+#  $JAVA -jar alfred.jar pc $DIR
+#  commit "Automatically match paragraphs"
+#
+#  echo "document matching"
+#  $JAVA -jar alfred.jar dc $DIR
+#  commit "Automatically match documents"
+#
+#  echo "assigning publisher ids to reports"
+#  $JAVA -jar alfred.jar pid $DIR
+#  commit "Automatically generate publisher IDs"
+#
+#  echo "exporting"
+#  rm -rf "$HOME/Sites-eXist/wilde-data/data/reports"
+#  $JAVA -jar alfred.jar export $DIR --directory "$HOME/Sites-eXist/wilde-data/data/reports"
+#
+#  echo "data tables"
+#  $JAVA -jar alfred.jar data --directory ~/Sites-eXist/wilde-data/data/tables/ $DIR
+#
+#  echo "publisher index"
+#  $JAVA -jar alfred.jar pidx --file="$HOME/Sites-eXist/wilde-data/data/publisherIndex.xml" $DIR
 else
   $JAVA -jar alfred.jar "$@"
 fi
