@@ -223,6 +223,16 @@ public class Report {
         this.id = id;
     }
 
+    public void generateId(int n) {
+        String parent = file.getParent();
+        parent = parent.substring(parent.indexOf('/')+1);
+        StringBuilder initials = new StringBuilder();
+        for(String s : parent.toLowerCase().split("[ /_]")) {
+            initials.append(s.charAt(0));
+        }
+        id = initials + "_" + n;
+    }
+
     /**
      * Check if the report has an ID
      *

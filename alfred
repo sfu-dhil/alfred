@@ -46,9 +46,9 @@ if [ "$1" == "--all" ]; then
 #  $JAVA -jar alfred.jar dc $DIR
 #  commit "Automatically match documents"
 #
-#  echo "assigning publisher ids to reports"
-#  $JAVA -jar alfred.jar pid $DIR
-#  commit "Automatically generate publisher IDs"
+ echo "assigning publisher ids to reports"
+ $JAVA -jar alfred.jar pid $DIR
+ commit "Automatically generate publisher IDs"
 #
 #  echo "exporting"
 #  rm -rf "$HOME/Sites-eXist/wilde-data/data/reports"

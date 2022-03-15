@@ -49,9 +49,10 @@ public class Clean extends Command {
         return opts;
     }
 
-    public void clean(Report report, boolean ids, boolean translation) {
+    public void clean(Report report, boolean ids, int n, boolean translation) {
         if(ids) {
             report.setId(null);
+            report.generateId(n);
             report.removeParagraphIds();
         }
         if(translation) {
@@ -83,12 +84,14 @@ public class Clean extends Command {
             if(report == null) {
                 throw new Exception("Cannot read report");
             }
-            clean(report, cmd.hasOption("ids"), cmd.hasOption("translations"));
+            clean(report, cmd.hasOption("ids"), 1, cmd.hasOption("translations"));
             CorpusWriter.write(report);
         } else {
             Corpus corpus = CorpusReader.read(getArgList(cmd));
+            int n = 1;
             for(Report report : corpus) {
-                clean(report, cmd.hasOption("ids"), cmd.hasOption("translations"));
+                clean(report, cmd.hasOption("ids"), n, cmd.hasOption("translations"));
+                n++;
                 tick();
             }
             reset();
