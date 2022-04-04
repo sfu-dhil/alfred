@@ -16,15 +16,16 @@ function commit {
     die;
   fi
 
-  pushd $DIR
+  pushd "$DIR" || exit
   git ci -am "$1";
-  popd;
+  popd || exit;
 }
 
-if [ "$1" == "--all" ]; then
+if [ "$1" == "--xsl" ]; then
+    $JAVA -jar alfred.jar cleanxsl --url=$XSL $DIR
+elif [ "$1" == "--all" ]; then
   echo "cleaning reports"
 
-#  $JAVA -jar alfred.jar cleanxsl --url=$XSL  $DIR
   $JAVA -jar alfred.jar clean --ids --translations $DIR
   commit "Automatically clean reports"
 
