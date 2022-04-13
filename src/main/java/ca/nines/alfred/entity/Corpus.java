@@ -40,9 +40,12 @@ public class Corpus implements Iterable<Report> {
     }
 
     public void add(Report report) {
+        n++;
+        if(report.getId().isEmpty()) {
+            report.setId("_" + n);
+        }
         if(reports.containsKey(report.getId())) {
             logger.info("Duplicate report key '" + report.getId() + "'");
-            n++;
             report.setId("_" + n);
         }
         reports.put(report.getId(), report);
