@@ -122,7 +122,7 @@ public class Check extends Command {
                 }
             }
 
-            if (report.hasMetadata("dc.source.url") && !report.getMetadata("dc.source.url").isBlank()) {
+            if (report.hasMetadata("dc.source.url") && !report.getMetadata("dc.source.url").trim().isEmpty()) {
                 try {
                     new URL(report.getMetadata("dc.source.url")).toURI();
                 } catch (MalformedURLException | URISyntaxException e) {

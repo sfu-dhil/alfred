@@ -139,10 +139,11 @@ public class Report {
      * @return the parsed report
      */
     public static Report read(String html) {
+        String data = html.replace("\u2028", "");
         Parser parser = Parser.xmlParser();
         parser.setTrackErrors(100);
 
-        Document document = Jsoup.parse(html, "", parser);
+        Document document = Jsoup.parse(data, "", parser);
         ParseErrorList errors = parser.getErrors();
 
         Report report = new Report();
